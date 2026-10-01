@@ -1,25 +1,25 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<meta name="theme-color" content="#080b10"/>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080b10">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon.svg">
-<title>BTC15 Signal V3.1</title>
+<title>BTC15 Signal V3.3</title>
 
 <style>
 :root{
   --bg:#080b10;
   --card:#111722;
   --card2:#0b1119;
-  --line:#273244;
+  --line:#263445;
   --text:#f4f7fb;
-  --muted:#8c99ad;
-  --green:#36d399;
-  --red:#fb6471;
-  --yellow:#ffbd3d;
-  --blue:#4b9cff;
+  --muted:#8d9bae;
+  --blue:#4294ff;
+  --green:#3dd6a3;
+  --red:#ff6575;
+  --yellow:#ffbe3d;
 }
 *{box-sizing:border-box}
 body{
@@ -37,18 +37,18 @@ header{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  margin-bottom:22px;
+  margin-bottom:24px;
 }
 .brand{
-  font-weight:900;
   font-size:24px;
+  font-weight:900;
   letter-spacing:.5px;
 }
 .brand span{color:var(--blue)}
 .status{
-  padding:9px 13px;
-  border-radius:999px;
-  background:#172131;
+  padding:10px 14px;
+  border-radius:30px;
+  background:#172235;
   color:var(--muted);
   font-size:14px;
 }
@@ -57,47 +57,56 @@ header{
   width:9px;height:9px;
   border-radius:50%;
   margin-right:7px;
-  background:var(--red);
+  background:var(--yellow);
 }
+.dot.live{background:var(--green)}
+.dot.bad{background:var(--red)}
 .card{
   background:var(--card);
   border:1px solid var(--line);
-  border-radius:24px;
-  padding:20px;
-  margin-bottom:16px;
+  border-radius:26px;
+  padding:22px;
+  margin-bottom:18px;
+}
+.top{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
 }
 .label{
   color:var(--muted);
   text-transform:uppercase;
-  letter-spacing:1.5px;
+  letter-spacing:2px;
   font-size:12px;
 }
-.topgrid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:14px;
+.price{
+  font-size:34px;
+  font-weight:900;
+  margin-top:13px;
 }
-.big{
-  font-size:31px;
-  font-weight:850;
-  margin-top:8px;
-}
-.right{text-align:right}
 .sub{
   color:var(--muted);
+  margin-top:6px;
   font-size:14px;
-  margin-top:8px;
 }
-.signal{text-align:center}
-.prob{
-  font-size:52px;
+.right{text-align:right}
+.timer{
+  font-size:34px;
   font-weight:900;
-  margin:10px 0 5px;
+  margin-top:13px;
+}
+.prob{
+  text-align:center;
+}
+.probValue{
+  font-size:58px;
+  font-weight:900;
+  margin:14px 0 8px;
 }
 .bar{
   height:12px;
-  background:#1c2838;
-  border-radius:99px;
+  background:#1d2a3b;
+  border-radius:20px;
   overflow:hidden;
   margin:18px 0;
 }
@@ -108,52 +117,58 @@ header{
   transition:.25s;
 }
 .call{
-  font-size:25px;
+  font-size:24px;
   font-weight:900;
-  margin:10px 0 18px;
+  margin:12px 0 20px;
 }
-.metrics3{
+.quotes{
   display:grid;
   grid-template-columns:repeat(3,1fr);
   gap:10px;
 }
-.metric{
+.box{
   background:var(--card2);
   border:1px solid var(--line);
-  border-radius:16px;
-  padding:14px 8px;
+  border-radius:18px;
+  padding:17px 8px;
   text-align:center;
 }
-.metric .v{
+.box .v{
+  margin-top:10px;
   font-size:20px;
   font-weight:800;
-  margin-top:7px;
 }
 .rows .row{
   display:flex;
   justify-content:space-between;
   gap:15px;
-  padding:14px 0;
-  border-bottom:1px solid #202a39;
+  padding:17px 0;
+  border-bottom:1px solid #233040;
 }
 .rows .row:last-child{border-bottom:0}
-.rows .value{
-  font-weight:800;
+.value{
   text-align:right;
-}
-.marketTitle{
-  font-size:17px;
-  font-weight:750;
-  margin-top:10px;
+  font-weight:800;
+  font-size:18px;
 }
 .good{color:var(--green)}
 .bad{color:var(--red)}
 .warn{color:var(--yellow)}
-.small{
+.market{
   color:var(--muted);
+  line-height:1.55;
+  word-break:break-word;
+}
+.debug{
   font-size:12px;
-  margin-top:10px;
-  line-height:1.4;
+  color:#657387;
+  margin-top:14px;
+}
+@media(max-width:500px){
+  .app{padding:25px 14px 50px}
+  .card{padding:20px}
+  .price,.timer{font-size:30px}
+  .probValue{font-size:52px}
 }
 </style>
 </head>
@@ -162,41 +177,48 @@ header{
 <div class="app">
 
 <header>
-  <div class="brand">BTC15 SIGNAL <span>V3.1</span></div>
-  <div class="status"><span class="dot" id="dot"></span><span id="connection">Connecting</span></div>
+  <div class="brand">BTC15 SIGNAL <span>V3.3</span></div>
+  <div class="status" id="status">
+    <span class="dot" id="dot"></span><span id="statusText">Connecting</span>
+  </div>
 </header>
 
-<div class="card">
-  <div class="topgrid">
-    <div>
-      <div class="label">Kalshi BTC Index</div>
-      <div class="big" id="price">—</div>
-      <div class="sub" id="priceTime">Waiting for live price</div>
-    </div>
-    <div class="right">
-      <div class="label">Window Ends In</div>
-      <div class="big" id="timer">—</div>
-      <div class="sub" id="closeTime">—</div>
-    </div>
+<div class="card top">
+  <div>
+    <div class="label">BTC Spot</div>
+    <div class="price" id="price">—</div>
+    <div class="sub" id="priceSource">Connecting to Coinbase…</div>
+  </div>
+
+  <div class="right">
+    <div class="label">Window Ends In</div>
+    <div class="timer" id="timer">—</div>
+    <div class="sub" id="endTime">—</div>
   </div>
 </div>
 
-<div class="card signal">
+<div class="card prob">
   <div class="label">Estimated Yes Probability</div>
-  <div class="prob" id="prob">—</div>
-  <div class="bar"><div class="fill" id="fill"></div></div>
+  <div class="probValue" id="prob">—</div>
+
+  <div class="bar">
+    <div class="fill" id="fill"></div>
+  </div>
+
   <div class="call" id="call">WAITING FOR DATA</div>
 
-  <div class="metrics3">
-    <div class="metric">
+  <div class="quotes">
+    <div class="box">
       <div class="label">Yes Ask</div>
       <div class="v" id="yesAsk">—</div>
     </div>
-    <div class="metric">
+
+    <div class="box">
       <div class="label">No Ask</div>
       <div class="v" id="noAsk">—</div>
     </div>
-    <div class="metric">
+
+    <div class="box">
       <div class="label">Best Edge</div>
       <div class="v" id="edge">—</div>
     </div>
@@ -204,205 +226,641 @@ header{
 </div>
 
 <div class="card rows">
-  <div class="row"><span class="label">Target</span><span class="value" id="target">—</span></div>
-  <div class="row"><span class="label">Distance Now</span><span class="value" id="distance">—</span></div>
-  <div class="row"><span class="label">Final-60s Running Avg</span><span class="value" id="avg60">Starts at T−60</span></div>
-  <div class="row"><span class="label">Seconds Locked</span><span class="value" id="locked">0 / 60</span></div>
-  <div class="row"><span class="label">Avg Needed From Here</span><span class="value" id="needed">—</span></div>
-  <div class="row"><span class="label">Cushion vs Needed</span><span class="value" id="cushion">—</span></div>
-  <div class="row"><span class="label">15s Momentum</span><span class="value" id="momentum">—</span></div>
-  <div class="row"><span class="label">Short Vol</span><span class="value" id="vol">—</span></div>
+
+  <div class="row">
+    <div class="label">Target</div>
+    <div class="value" id="target">—</div>
+  </div>
+
+  <div class="row">
+    <div class="label">Distance Now</div>
+    <div class="value" id="distance">—</div>
+  </div>
+
+  <div class="row">
+    <div class="label">Final-60s Running Avg</div>
+    <div class="value" id="runningAvg">Starts at T−60</div>
+  </div>
+
+  <div class="row">
+    <div class="label">Seconds Locked</div>
+    <div class="value" id="locked">0 / 60</div>
+  </div>
+
+  <div class="row">
+    <div class="label">Avg Needed From Here</div>
+    <div class="value" id="needed">—</div>
+  </div>
+
+  <div class="row">
+    <div class="label">Cushion vs Needed</div>
+    <div class="value" id="cushion">—</div>
+  </div>
+
+  <div class="row">
+    <div class="label">15s Momentum</div>
+    <div class="value" id="momentum">—</div>
+  </div>
+
+  <div class="row">
+    <div class="label">Short Vol</div>
+    <div class="value" id="vol">—</div>
+  </div>
+
 </div>
 
 <div class="card">
   <div class="label">Market</div>
-  <div class="marketTitle" id="market">Waiting for Kalshi market…</div>
-  <div class="small" id="ticker"></div>
-</div>
-
-<div class="small">
-Decision-support only. Probability is a model estimate, not a guarantee. Final settlement depends on Kalshi's official rules and data.
+  <div class="market" id="market">Waiting for Kalshi market…</div>
+  <div class="debug" id="debug"></div>
 </div>
 
 </div>
 
 <script>
-const API = "https://btc15-api.huntergunther52.workers.dev/api/current";
+const API =
+  "https://btc15-api.huntergunther52.workers.dev/api/current";
 
-let data = null;
+let market = null;
+let closeMs = null;
+let btc = null;
+
+let history = [];
+let finalSamples = new Map();
 
 const $ = id => document.getElementById(id);
 
-const money = x =>
-  Number.isFinite(x)
-    ? "$" + x.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})
-    : "—";
+function money(x){
+  if(!Number.isFinite(Number(x))) return "—";
 
-const pct = x =>
-  Number.isFinite(x) ? Math.round(x*100) + "%" : "—";
+  return Number(x).toLocaleString("en-US",{
+    style:"currency",
+    currency:"USD",
+    minimumFractionDigits:2,
+    maximumFractionDigits:2
+  });
+}
 
-function clamp(x,a,b){return Math.max(a,Math.min(b,x))}
+function pct(x){
+  if(!Number.isFinite(Number(x))) return "—";
+  return (Number(x)*100).toFixed(1)+"%";
+}
 
-function calc(){
-  if(!data?.market || !data?.live?.available || !data.live.points?.length) return;
+function signedMoney(x){
+  if(!Number.isFinite(Number(x))) return "—";
+  const n=Number(x);
+  return (n>=0?"+":"−")+money(Math.abs(n));
+}
 
-  const m=data.market;
-  const pts=data.live.points;
-  const latest=pts[pts.length-1];
-  const price=latest.p;
-  const target=Number(m.target);
-  const close=Date.parse(m.close_time);
+function clamp(x,a,b){
+  return Math.max(a,Math.min(b,x));
+}
+
+function normalCDF(x){
+  const t=1/(1+0.2316419*Math.abs(x));
+  const d=0.3989423*Math.exp(-x*x/2);
+
+  let p =
+    1-d*t*(
+      0.319381530+
+      t*(-0.356563782+
+      t*(1.781477937+
+      t*(-1.821255978+
+      t*1.330274429)))
+    );
+
+  return x>=0?p:1-p;
+}
+
+async function loadMarket(){
+
+  try{
+
+    const r=await fetch(
+      API+"?t="+Date.now(),
+      {cache:"no-store"}
+    );
+
+    const data=await r.json();
+
+    if(!data.ok){
+      throw new Error(data.error || "API error");
+    }
+
+    market=data.market;
+    closeMs=Date.parse(market.close_time);
+
+    $("target").textContent=money(market.target);
+    $("yesAsk").textContent=pct(market.yes_ask);
+    $("noAsk").textContent=pct(market.no_ask);
+
+    $("market").innerHTML =
+      "<strong>"+market.title+"</strong><br>"+
+      market.ticker+"<br>"+
+      "Closes "+new Date(closeMs).toLocaleTimeString([],{
+        hour:"numeric",
+        minute:"2-digit",
+        second:"2-digit"
+      });
+
+    $("debug").textContent =
+      "Backend "+data.version+
+      " • Kalshi market feed connected";
+
+    setLiveState();
+
+  }catch(e){
+
+    $("debug").textContent =
+      "Kalshi error: "+e.message;
+
+    setBadState();
+  }
+}
+
+function setLiveState(){
+  $("dot").className="dot live";
+  $("statusText").textContent="Live";
+}
+
+function setBadState(){
+  $("dot").className="dot bad";
+  $("statusText").textContent="Feed issue";
+}
+
+/*
+  Coinbase spot ticker.
+
+  Browser requests Coinbase's public BTC-USD spot endpoint.
+  This is deliberately independent of Kalshi live_data.
+*/
+
+async function loadBTC(){
+
+  try{
+
+    const r=await fetch(
+      "https://api.coinbase.com/v2/prices/BTC-USD/spot",
+      {cache:"no-store"}
+    );
+
+    if(!r.ok)
+      throw new Error("BTC HTTP "+r.status);
+
+    const data=await r.json();
+
+    const p=Number(data?.data?.amount);
+
+    if(!Number.isFinite(p))
+      throw new Error("Invalid BTC price");
+
+    btc=p;
+
+    const now=Date.now();
+
+    history.push({
+      t:now,
+      p
+    });
+
+    history=history.filter(
+      x=>now-x.t<=120000
+    );
+
+    $("price").textContent=money(p);
+    $("priceSource").textContent="Coinbase BTC-USD";
+
+    captureFinalSecond(now,p);
+
+    calculate();
+
+    setLiveState();
+
+  }catch(e){
+
+    $("priceSource").textContent=
+      "BTC feed retrying…";
+
+    $("debug").textContent=
+      "BTC feed: "+e.message;
+
+  }
+}
+
+/*
+  During T-60 through settlement, save one observation
+  for each elapsed second.
+
+  Repeated requests in the same second replace the value
+  rather than double-counting that second.
+*/
+
+function captureFinalSecond(now,p){
+
+  if(!closeMs) return;
+
+  const remaining=
+    (closeMs-now)/1000;
+
+  if(
+    remaining<=60 &&
+    remaining>=0
+  ){
+    const sec=Math.floor(now/1000);
+
+    finalSamples.set(sec,p);
+
+    for(const key of finalSamples.keys()){
+      if(sec-key>70)
+        finalSamples.delete(key);
+    }
+  }
+}
+
+function std(values){
+
+  if(values.length<2) return 0;
+
+  const avg=
+    values.reduce((a,b)=>a+b,0)/
+    values.length;
+
+  const variance=
+    values.reduce(
+      (s,x)=>s+(x-avg)**2,
+      0
+    )/(values.length-1);
+
+  return Math.sqrt(variance);
+}
+
+function calculate(){
+
+  if(!market || !btc || !closeMs)
+    return;
+
   const now=Date.now();
-  const remaining=Math.max(0,(close-now)/1000);
 
-  $("price").textContent=money(price);
-  $("target").textContent=money(target);
+  const remaining=
+    Math.max(0,(closeMs-now)/1000);
+
+  const target=
+    Number(market.target);
+
+  if(!Number.isFinite(target))
+    return;
+
+  const distance=
+    btc-target;
+
   $("distance").textContent=
-    Number.isFinite(target) ? (price-target>=0?"+":"")+money(Math.abs(price-target)).replace("$","$") : "—";
+    signedMoney(distance);
 
-  $("yesAsk").textContent=pct(m.yes_ask);
-  $("noAsk").textContent=pct(m.no_ask);
+  $("distance").className=
+    "value "+(
+      distance>=0?"good":"bad"
+    );
 
-  const recent=pts.filter(x=>x.t>=latest.t-15000);
-  let momentum=0;
-  if(recent.length>1) momentum=recent[recent.length-1].p-recent[0].p;
+  /*
+    Momentum
+  */
 
-  $("momentum").textContent=(momentum>=0?"+":"")+money(Math.abs(momentum));
-  $("momentum").className="value "+(momentum>=0?"good":"bad");
+  const old=
+    history.find(
+      x=>x.t<=now-15000
+    ) || history[0];
 
-  const short=pts.slice(-30);
-  const mean=short.reduce((s,x)=>s+x.p,0)/short.length;
-  const variance=short.reduce((s,x)=>s+(x.p-mean)**2,0)/Math.max(1,short.length);
-  const vol=Math.sqrt(variance);
+  const momentum=
+    old ? btc-old.p : 0;
 
-  $("vol").textContent="$"+vol.toFixed(2);
+  $("momentum").textContent=
+    signedMoney(momentum);
 
-  let finalPts=[];
-  if(remaining<=60){
-    const start=close-60000;
-    finalPts=pts.filter(x=>x.t>=start && x.t<=close);
+  $("momentum").className=
+    "value "+(
+      momentum>0?"good":
+      momentum<0?"bad":""
+    );
+
+  /*
+    Short volatility from price changes.
+  */
+
+  const recent=
+    history.filter(
+      x=>now-x.t<=30000
+    );
+
+  const changes=[];
+
+  for(let i=1;i<recent.length;i++){
+    changes.push(
+      recent[i].p-recent[i-1].p
+    );
   }
 
-  if(finalPts.length){
-    const avg=finalPts.reduce((s,x)=>s+x.p,0)/finalPts.length;
-    $("avg60").textContent=money(avg);
+  const volatility=
+    std(changes);
 
-    const locked=Math.min(60,finalPts.length);
-    $("locked").textContent=locked+" / 60";
+  $("vol").textContent=
+    money(volatility)+"/sample";
 
-    if(Number.isFinite(target) && locked<60){
-      const sum=finalPts.reduce((s,x)=>s+x.p,0);
-      const needed=(target*60-sum)/(60-locked);
-      $("needed").textContent=money(needed);
+  /*
+    Final 60-second settlement math.
+  */
 
-      const cushion=price-needed;
-      $("cushion").textContent=(cushion>=0?"+":"-")+"$"+Math.abs(cushion).toFixed(2);
-      $("cushion").className="value "+(cushion>=0?"good":"bad");
+  const samples=
+    [...finalSamples.values()];
+
+  const locked=samples.length;
+
+  $("locked").textContent=
+    Math.min(locked,60)+" / 60";
+
+  let runningAvg=null;
+  let needed=null;
+  let cushion=null;
+
+  if(remaining<=60){
+
+    if(locked){
+
+      const sum=
+        samples.reduce((a,b)=>a+b,0);
+
+      runningAvg=
+        sum/locked;
+
+      $("runningAvg").textContent=
+        money(runningAvg);
+
+      const remainingSlots=
+        Math.max(0,60-locked);
+
+      if(remainingSlots>0){
+
+        needed=
+          (
+            target*60-
+            sum
+          )/remainingSlots;
+
+        cushion=
+          btc-needed;
+
+        $("needed").textContent=
+          money(needed);
+
+        $("cushion").textContent=
+          signedMoney(cushion);
+
+        $("cushion").className=
+          "value "+(
+            cushion>=0?"good":"bad"
+          );
+
+      }else{
+
+        $("needed").textContent=
+          "Locked";
+
+        cushion=
+          runningAvg-target;
+
+        $("cushion").textContent=
+          signedMoney(cushion);
+      }
+
     }else{
-      $("needed").textContent="Locked";
+      $("runningAvg").textContent=
+        "Collecting…";
     }
+
   }else{
-    $("avg60").textContent="Starts at T−60";
-    $("locked").textContent="0 / 60";
+
+    $("runningAvg").textContent=
+      "Starts at T−60";
+
+    $("locked").textContent=
+      "0 / 60";
+
     $("needed").textContent="—";
     $("cushion").textContent="—";
   }
 
-  let score=0;
+  /*
+    Probability model.
 
-  if(Number.isFinite(target)){
-    const dist=price-target;
-    const scale=Math.max(8,vol*3);
-    score=1/(1+Math.exp(-dist/scale));
+    This is a decision-support estimate, NOT Kalshi's
+    settlement probability.
 
-    if(momentum>0) score+=0.04;
-    if(momentum<0) score-=0.04;
+    Before T-60:
+      distance + momentum + observed volatility.
 
-    if(finalPts.length && remaining<60){
-      const avg=finalPts.reduce((s,x)=>s+x.p,0)/finalPts.length;
-      score=score*.55+(avg>target?.75:.25)*.45;
-    }
-  }else{
-    score=m.yes_ask ?? .5;
+    During final minute:
+      required remaining average becomes the primary input.
+  */
+
+  let signalDistance=
+    distance;
+
+  if(
+    remaining<=60 &&
+    Number.isFinite(needed)
+  ){
+    signalDistance=
+      btc-needed;
   }
 
-  score=clamp(score,.01,.99);
+  const sigma=
+    Math.max(
+      volatility*5,
+      12
+    );
 
-  $("prob").textContent=Math.round(score*100)+"%";
-  $("fill").style.width=(score*100)+"%";
+  const momentumBoost=
+    momentum*0.18;
 
-  let call="TOO CLOSE";
-  if(score>=.65) call="YES LEAN";
-  if(score>=.78) call="STRONG YES";
-  if(score<=.35) call="NO LEAN";
-  if(score<=.22) call="STRONG NO";
+  const z=
+    (
+      signalDistance+
+      momentumBoost
+    )/sigma;
+
+  let probability=
+    normalCDF(z);
+
+  /*
+    Blend slightly toward market pricing while there
+    is still substantial time remaining.
+  */
+
+  if(
+    remaining>60 &&
+    Number.isFinite(market.yes_ask)
+  ){
+    probability=
+      probability*0.75+
+      Number(market.yes_ask)*0.25;
+  }
+
+  probability=
+    clamp(probability,0.01,0.99);
+
+  $("prob").textContent=
+    (probability*100).toFixed(1)+"%";
+
+  $("fill").style.width=
+    (probability*100)+"%";
+
+  const yesAsk=
+    Number(market.yes_ask);
+
+  const noAsk=
+    Number(market.no_ask);
+
+  const yesEdge=
+    Number.isFinite(yesAsk)
+      ? probability-yesAsk
+      : null;
+
+  const noEdge=
+    Number.isFinite(noAsk)
+      ? (1-probability)-noAsk
+      : null;
+
+  let edgeText="—";
+
+  if(
+    Number.isFinite(yesEdge) &&
+    Number.isFinite(noEdge)
+  ){
+
+    if(
+      yesEdge>0 &&
+      yesEdge>=noEdge
+    ){
+      edgeText=
+        "YES +"+
+        (yesEdge*100).toFixed(1)+"¢";
+    }
+    else if(noEdge>0){
+      edgeText=
+        "NO +"+
+        (noEdge*100).toFixed(1)+"¢";
+    }
+    else{
+      edgeText="None";
+    }
+  }
+
+  $("edge").textContent=edgeText;
+
+  let call="NO CLEAR EDGE";
+
+  if(probability>=0.65)
+    call="YES LEAN";
+
+  if(probability<=0.35)
+    call="NO LEAN";
+
+  if(
+    probability>0.45 &&
+    probability<0.55
+  )
+    call="TOO CLOSE";
 
   $("call").textContent=call;
-
-  const yesEdge=Number.isFinite(m.yes_ask)?score-m.yes_ask:null;
-  const noProb=1-score;
-  const noEdge=Number.isFinite(m.no_ask)?noProb-m.no_ask:null;
-
-  if(yesEdge!=null || noEdge!=null){
-    if((yesEdge??-99)>=(noEdge??-99)){
-      $("edge").textContent="YES "+(yesEdge>=0?"+":"")+Math.round(yesEdge*100)+"¢";
-      $("edge").className="v "+(yesEdge>0?"good":"bad");
-    }else{
-      $("edge").textContent="NO "+(noEdge>=0?"+":"")+Math.round(noEdge*100)+"¢";
-      $("edge").className="v "+(noEdge>0?"good":"bad");
-    }
-  }
 }
 
 function updateTimer(){
-  if(!data?.market?.close_time)return;
-  const close=Date.parse(data.market.close_time);
-  const sec=Math.max(0,Math.ceil((close-Date.now())/1000));
-  const mm=Math.floor(sec/60);
-  const ss=String(sec%60).padStart(2,"0");
-  $("timer").textContent=mm+":"+ss;
 
-  if(sec<=60) $("timer").className="big warn";
-  else $("timer").className="big";
+  if(!closeMs) return;
 
-  calc();
-}
+  let s=
+    Math.max(
+      0,
+      Math.ceil(
+        (closeMs-Date.now())/1000
+      )
+    );
 
-async function load(){
-  try{
-    const r=await fetch(API+"?t="+Date.now(),{cache:"no-store"});
-    if(!r.ok) throw new Error("API "+r.status);
+  const m=
+    Math.floor(s/60);
 
-    data=await r.json();
-    if(!data.ok) throw new Error(data.error||"API error");
+  const sec=
+    s%60;
 
-    $("connection").textContent="Live";
-    $("dot").style.background="var(--green)";
+  $("timer").textContent=
+    m+":"+
+    String(sec).padStart(2,"0");
 
-    const m=data.market;
-    $("market").textContent=m.title||"BTC 15-minute market";
-    $("ticker").textContent=m.ticker||"";
-    $("closeTime").textContent=
-      m.close_time ? new Date(m.close_time).toLocaleTimeString([],{
-        hour:"numeric",minute:"2-digit",second:"2-digit"
-      }) : "—";
+  $("endTime").textContent=
+    new Date(closeMs)
+      .toLocaleTimeString([],{
+        hour:"numeric",
+        minute:"2-digit",
+        second:"2-digit"
+      });
 
-    if(data.live?.latest?.t){
-      $("priceTime").textContent=
-        "Updated "+new Date(data.live.latest.t).toLocaleTimeString();
-    }
+  /*
+    When a contract expires, request the next
+    Kalshi market.
+  */
 
-    calc();
-  }catch(e){
-    $("connection").textContent="Retrying";
-    $("dot").style.background="var(--red)";
-    $("market").textContent="Connection error: "+e.message;
+  if(s===0){
+    setTimeout(loadMarket,1500);
   }
 }
 
-load();
-setInterval(load,3000);
-setInterval(updateTimer,250);
+/*
+  Initial boot.
+*/
+
+loadMarket();
+loadBTC();
+
+/*
+  Kalshi metadata:
+  every 5 seconds.
+
+  BTC spot:
+  every second.
+
+  Timer:
+  250ms for smooth countdown.
+*/
+
+setInterval(
+  loadMarket,
+  5000
+);
+
+setInterval(
+  loadBTC,
+  1000
+);
+
+setInterval(
+  updateTimer,
+  250
+);
+
+/*
+  PWA service worker.
+*/
+
+if("serviceWorker" in navigator){
+  window.addEventListener(
+    "load",
+    ()=>{
+      navigator.serviceWorker
+        .register("./sw.js")
+        .catch(()=>{});
+    }
+  );
+}
 </script>
+
 </body>
 </html>

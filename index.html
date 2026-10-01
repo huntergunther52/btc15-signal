@@ -26,9 +26,32 @@ let market=null, closeMs=0, target=0, yesAsk=null, noAsk=null, officialLatest=0,
 let points=[], secSamples=new Map(), coinbasePrice=0, apiOK=false, fetching=false, nextPoll=0;
 const money=x=>Number.isFinite(x)?x.toLocaleString(undefined,{style:"currency",currency:"USD",maximumFractionDigits:2}):"—";
 const cents=x=>Number.isFinite(x)?Math.round(x*100)+"¢":"—";
-function normalCdf(x){const t=1/(1+.2316419*Math.abs(x)),d=.3989423*Math.exp(-x*x/2);let p=d*t*(.3193815+t*(-.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));return x>0?1-p:p}
+function normalCdf(x){const t=1/(1+0.2316419*Math.abs(x));const d=0.3989423*Math.exp(-x*x/2);const poly=t*(0.3193815+t*(-0.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));const tail=d*poly;return x>=0?1-tail:tail}
 function mergePoints(arr){for(const x of (arr||[])){const t=Number(x.t),p=Number(x.p);if(Number.isFinite(t)&&Number.isFinite(p)&&p>1000){points.push({t,p});secSamples.set(Math.floor(t/1000),p);if(t>=officialLatestT){officialLatestT=t;officialLatest=p}}}const cutoff=Date.now()-240000;points=points.filter(x=>x.t>=cutoff);points.sort((a,b)=>a.t-b.t);const seen=new Set();points=points.filter(x=>{const k=x.t+":"+x.p;if(seen.has(k))return false;seen.add(k);return true});for(const s of [...secSamples.keys()])if(s*1000<cutoff)secSamples.delete(s)}
-function estimateProb(now){if(!target||!officialLatest||!closeMs)return null;const finalStart=closeMs-60000;const locked=[...secSamples].filter(([s])=>s*1000>=finalStart&&s*1000<closeMs).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);const recent=points.filter(x=>x.t>=now-120000&&x.t<=now+2000);if(recent.length<5)return officialLatest>target?.55:.45;let rets=[];for(let i=1;i<recent.length;i++){const dt=(recent[i].t-recent[i-1].t)/1000;if(dt>0&&dt<10)rets.push(Math.log(recent[i].p/recent[i-1].p)/Math.sqrt(dt))}let sigma=Math.sqrt(rets.reduce((s,x)=>s+x*x,0)/Math.max(1,rets.length));sigma=Math.max(sigma,.00002);if(now>=finalStart&&locked.length){const sum=locked.reduce((a,b)=>a+b,0),rem=Math.max(0,60-locked.length);if(rem===0)return sum/60>target?1:0;const need=(target*60-sum)/rem,sd=officialLatest*sigma*Math.sqrt(Math.max(1,rem)/3);return Math.max(.001,Math.min(.999,1-normalCdf((need-officialLatest)/sd)))}const remain=Math.max(1,(closeMs-now)/1000),sd=officialLatest*sigma*Math.sqrt(remain);return Math.max(.001,Math.min(.999,1-normalCdf((target-officialLatest)/sd))}
+function estimateProb(now){
+  if(!target||!officialLatest||!closeMs) return null;
+  const finalStart=closeMs-60000;
+  const locked=[...secSamples].filter(([sec])=>sec*1000>=finalStart&&sec*1000<closeMs).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
+  const recent=points.filter(x=>x.t>=now-120000&&x.t<=now+2000);
+  if(recent.length<5) return officialLatest>target?0.55:0.45;
+  const rets=[];
+  for(let i=1;i<recent.length;i++){
+    const dt=(recent[i].t-recent[i-1].t)/1000;
+    if(dt>0&&dt<10) rets.push(Math.log(recent[i].p/recent[i-1].p)/Math.sqrt(dt));
+  }
+  let sigma=Math.sqrt(rets.reduce((sum,x)=>sum+x*x,0)/Math.max(1,rets.length));
+  sigma=Math.max(sigma,0.00002);
+  if(now>=finalStart&&locked.length){
+    const sum=locked.reduce((a,b)=>a+b,0), rem=Math.max(0,60-locked.length);
+    if(rem===0) return sum/60>target?1:0;
+    const need=(target*60-sum)/rem;
+    const sd=officialLatest*sigma*Math.sqrt(Math.max(1,rem)/3);
+    return Math.max(0.001,Math.min(0.999,1-normalCdf((need-officialLatest)/sd)));
+  }
+  const remain=Math.max(1,(closeMs-now)/1000);
+  const sd=officialLatest*sigma*Math.sqrt(remain);
+  return Math.max(0.001,Math.min(0.999,1-normalCdf((target-officialLatest)/sd)));
+}
 function setClass(el,val){el.className="v "+(val>0?"good":val<0?"bad":"")}
 function render(){const now=Date.now(),left=closeMs?Math.max(0,Math.ceil((closeMs-now)/1000)):0;$('timer').textContent=closeMs?String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0'):'—';const stale=officialLatestT?now-officialLatestT>7000:true;const shown=officialLatest||coinbasePrice;$('spot').textContent=shown?money(shown):'—';$('targetOut').textContent=target?money(target):'—';if(shown&&target){const d=shown-target;$('distance').textContent=(d>=0?'+':'')+money(d);setClass($('distance'),d)}
  const finalStart=closeMs-60000,locked=[...secSamples].filter(([s])=>s*1000>=finalStart&&s*1000<closeMs).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);$('finalCard').className='card rows final'+(closeMs&&left<=60?' hot':'');if(closeMs&&now>=finalStart&&locked.length&&target){const sum=locked.reduce((a,b)=>a+b,0),avg=sum/locked.length,rem=Math.max(0,60-locked.length),need=rem?(target*60-sum)/rem:NaN;$('avg60').textContent=money(avg);$('locked').textContent=locked.length+' / 60';$('needed').textContent=rem?money(need):'Complete';if(rem&&officialLatest){const c=officialLatest-need;$('cushion').textContent=(c>=0?'+':'')+money(c);setClass($('cushion'),c)}}else{$('avg60').textContent='Starts at T−60';$('locked').textContent='0 / 60';$('needed').textContent='—';$('cushion').textContent='—'}

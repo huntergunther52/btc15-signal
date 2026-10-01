@@ -1,13 +1,20 @@
-# BTC15 Signal V2
+# BTC15 Signal V3
 
-Upgrade for the existing GitHub Pages app.
+Mobile-first BTC 15-minute decision-support dashboard.
 
-- Auto-discovers the current open Kalshi `KXBTC15M` market.
-- Auto-loads the target and available YES price from Kalshi public market data.
-- Attempts Kalshi `GET /live_data/events/{event_ticker}?range=15min` for the event underlying data.
-- Explicitly labels Coinbase as **INDICATIVE** whenever Kalshi event live data is unavailable.
-- Keeps the final-60-second accumulator, required remaining average, cushion, momentum, volatility, and experimental probability model.
+V3 uses the Cloudflare Worker at `btc15-api.huntergunther52.workers.dev/api/current` as the primary source for the open Kalshi `KXBTC15M` market, target, YES/NO asks, close time, and Kalshi event live-data samples.
 
-Upload all five files to the root of the existing `btc15-signal` repository and replace the old versions.
+Highlights:
+- No manual target entry.
+- Uses the market's actual `close_time`, not a locally guessed quarter-hour.
+- Final-60-second running average and locked sample count.
+- Required remaining average and live cushion.
+- Kalshi YES/NO ask prices and experimental model edge.
+- YES / NO / PASS gating: a directional signal requires >=62% model probability and >=8¢ estimated edge; otherwise PASS.
+- Stale-data protection.
+- Coinbase websocket is display-only fallback and is explicitly treated as indicative; it is never mixed into official final-60 settlement samples while Kalshi data is available.
+- V3 service-worker cache invalidation so iPhone installs update cleanly.
 
-**Important:** probability remains experimental/unvalidated. Feed source is shown in-app and must be checked before relying on settlement calculations.
+Upload/replace all five files in the root of the `btc15-signal` GitHub repository. GitHub Pages should redeploy automatically.
+
+Important: the probability model is experimental and unvalidated. This tool does not guarantee Kalshi settlement or trading profit.

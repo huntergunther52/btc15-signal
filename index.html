@@ -6,168 +6,36 @@
 <meta name="theme-color" content="#080b10"/>
 <link rel="manifest" href="manifest.webmanifest"/>
 <link rel="apple-touch-icon" href="icon.svg"/>
-<title>BTC15 Signal V2</title>
+<title>BTC15 Signal V3</title>
 <style>
-:root{--bg:#080b10;--card:#111722;--muted:#8c98aa;--text:#f4f7fb;--green:#28d17c;--red:#ff5f6d;--amber:#ffbd3e;--line:#222c3b}
-*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",Inter,Arial,sans-serif}
-.app{max-width:520px;margin:auto;padding:env(safe-area-inset-top) 14px calc(28px + env(safe-area-inset-bottom))}
-header{display:flex;align-items:center;justify-content:space-between;padding:16px 2px 10px}
-.brand{font-size:18px;font-weight:800;letter-spacing:.3px}.pill{font-size:12px;padding:6px 9px;border-radius:999px;background:#17202d;color:#b8c4d6}
-.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;margin:10px 0;box-shadow:0 12px 30px rgba(0,0,0,.18)}
-.topgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.9px}.big{font-size:28px;font-weight:800;margin-top:3px}.timer{text-align:right}.timer .big{font-variant-numeric:tabular-nums}
-.signal{text-align:center;padding:20px 14px}.prob{font-size:60px;font-weight:900;line-height:1}.sig{font-size:17px;font-weight:800;margin-top:8px}
-.bar{height:10px;border-radius:99px;background:#1b2432;overflow:hidden;margin:16px 0 4px}.bar>div{height:100%;width:50%;background:var(--amber);transition:.3s}
-.rows .row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}.rows .row:last-child{border:0}.v{font-weight:750;font-variant-numeric:tabular-nums}
-input{width:100%;background:#0b1018;border:1px solid #2a3547;border-radius:12px;color:white;padding:12px;font-size:16px;margin-top:6px;outline:none}
-.inputs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-button{width:100%;border:0;border-radius:13px;padding:13px;font-size:15px;font-weight:800;background:#f4f7fb;color:#0a0d12;margin-top:12px}
-.small{font-size:12px;color:var(--muted);line-height:1.45}.good{color:var(--green)}.bad{color:var(--red)}.warn{color:var(--amber)}
-.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red);margin-right:6px}.live .dot{background:var(--green)}
-.mode{font-size:12px;color:var(--muted);text-align:center;margin-top:8px}
+:root{--bg:#080b10;--card:#111722;--muted:#8c98aa;--text:#f4f7fb;--green:#28d17c;--red:#ff5f6d;--amber:#ffbd3e;--blue:#62a8ff;--line:#222c3b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",Inter,Arial,sans-serif}.app{max-width:520px;margin:auto;padding:env(safe-area-inset-top) 14px calc(28px + env(safe-area-inset-bottom))}header{display:flex;align-items:center;justify-content:space-between;padding:16px 2px 10px}.brand{font-size:18px;font-weight:850;letter-spacing:.3px}.pill{font-size:12px;padding:6px 9px;border-radius:999px;background:#17202d;color:#b8c4d6}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red);margin-right:6px}.live .dot{background:var(--green)}.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;margin:10px 0;box-shadow:0 12px 30px rgba(0,0,0,.18)}.topgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.9px}.big{font-size:28px;font-weight:850;margin-top:3px}.timer{text-align:right}.timer .big,.v{font-variant-numeric:tabular-nums}.mode{font-size:12px;color:var(--muted);text-align:center;margin-top:9px;line-height:1.4}.signal{text-align:center;padding:20px 14px}.prob{font-size:58px;font-weight:900;line-height:1}.sig{font-size:18px;font-weight:900;margin-top:8px}.bar{height:10px;border-radius:99px;background:#1b2432;overflow:hidden;margin:16px 0 4px}.bar>div{height:100%;width:50%;background:var(--amber);transition:.3s}.rows .row{display:flex;justify-content:space-between;gap:16px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}.rows .row:last-child{border:0}.v{font-weight:780;text-align:right}.good{color:var(--green)}.bad{color:var(--red)}.warn{color:var(--amber)}.blue{color:var(--blue)}.small{font-size:12px;color:var(--muted);line-height:1.5}.statusline{display:flex;justify-content:space-between;gap:10px;margin-top:10px}.statusbox{flex:1;background:#0b1018;border:1px solid var(--line);border-radius:12px;padding:10px}.statusbox b{display:block;font-size:14px;margin-top:3px}.final{border-color:#3a4659}.final.hot{border-color:var(--amber);box-shadow:0 0 0 1px rgba(255,189,62,.15),0 12px 30px rgba(0,0,0,.18)}
 </style>
 </head>
-<body>
-<div class="app">
-<header><div class="brand">BTC15 SIGNAL <span style="color:#62a8ff">V2</span></div><div id="conn" class="pill"><span class="dot"></span>Connecting</div></header>
-
-<div class="card">
- <div class="topgrid">
-  <div><div class="label">BTC indicative</div><div id="spot" class="big">—</div></div>
-  <div class="timer"><div class="label">Window ends in</div><div id="timer" class="big">—</div></div>
- </div>
- <div class="mode"><span id="feedLabel">Connecting to Kalshi market + settlement-index data…</span></div>
-</div>
-
-<div class="card signal">
- <div class="label">Estimated YES probability</div>
- <div id="prob" class="prob">—</div>
- <div class="bar"><div id="probbar"></div></div>
- <div id="signal" class="sig">WAITING FOR DATA</div>
-</div>
-
-<div class="card rows">
- <div class="row"><span class="label">Target</span><span id="targetOut" class="v">—</span></div>
- <div class="row"><span class="label">Distance</span><span id="distance" class="v">—</span></div>
- <div class="row"><span class="label">Final-60s running avg</span><span id="avg60" class="v">Not started</span></div>
- <div class="row"><span class="label">Seconds locked</span><span id="locked" class="v">0 / 60</span></div>
- <div class="row"><span class="label">Avg needed from here</span><span id="needed" class="v">—</span></div>
- <div class="row"><span class="label">Cushion vs needed</span><span id="cushion" class="v">—</span></div>
- <div class="row"><span class="label">15s momentum</span><span id="momentum" class="v">—</span></div>
- <div class="row"><span class="label">Short vol</span><span id="vol" class="v">—</span></div>
- <div class="row"><span class="label">Kalshi YES price</span><span id="yesOut" class="v">—</span></div>
- <div class="row"><span class="label">Model edge</span><span id="edge" class="v">—</span></div>
-</div>
-
-<div class="card">
- <div class="label">Fallback inputs (auto-filled when Kalshi API is available)</div>
- <div class="inputs">
-  <div><label class="small">Kalshi target ($)</label><input id="target" inputmode="decimal" placeholder="e.g. 67425"/></div>
-  <div><label class="small">YES price (¢)</label><input id="yesprice" inputmode="decimal" placeholder="e.g. 61"/></div>
- </div>
- <button id="save">Update</button>
- <p class="small">V2 automatically discovers the open KXBTC15M market and target. These fields remain as a fallback if the public API is unavailable in Safari.</p>
-</div>
-
-<div class="card">
- <div class="label">How to read it</div>
- <p class="small"><b>Avg needed</b> is the average BTC price the remaining seconds would need for the full final-minute average to finish exactly at your target. During the last 60 seconds, the calculation progressively locks in observed one-second samples.</p>
- <p class="small warn"><b>Important:</b> V2 attempts Kalshi event live-data first. If Safari cannot consume that feed, the app explicitly labels Coinbase as INDICATIVE. Never treat an indicative fallback as the official settlement value.</p>
-</div>
+<body><div class="app">
+<header><div class="brand">BTC15 SIGNAL <span class="blue">V3</span></div><div id="conn" class="pill"><span class="dot"></span>Connecting</div></header>
+<div class="card"><div class="topgrid"><div><div class="label">Kalshi BTC index</div><div id="spot" class="big">—</div></div><div class="timer"><div class="label">Window ends in</div><div id="timer" class="big">—</div></div></div><div class="mode" id="feedLabel">Connecting to BTC15 API…</div></div>
+<div class="card signal"><div class="label">Estimated YES probability</div><div id="prob" class="prob">—</div><div class="bar"><div id="probbar"></div></div><div id="signal" class="sig">WAITING FOR DATA</div><div class="statusline"><div class="statusbox"><span class="label">YES ask</span><b id="yesOut">—</b></div><div class="statusbox"><span class="label">NO ask</span><b id="noOut">—</b></div><div class="statusbox"><span class="label">Best edge</span><b id="edge">—</b></div></div></div>
+<div id="finalCard" class="card rows final"><div class="row"><span class="label">Target</span><span id="targetOut" class="v">—</span></div><div class="row"><span class="label">Distance now</span><span id="distance" class="v">—</span></div><div class="row"><span class="label">Final-60s running avg</span><span id="avg60" class="v">Starts at T−60</span></div><div class="row"><span class="label">Seconds locked</span><span id="locked" class="v">0 / 60</span></div><div class="row"><span class="label">Avg needed from here</span><span id="needed" class="v">—</span></div><div class="row"><span class="label">Cushion vs needed</span><span id="cushion" class="v">—</span></div><div class="row"><span class="label">15s momentum</span><span id="momentum" class="v">—</span></div><div class="row"><span class="label">Short vol</span><span id="vol" class="v">—</span></div></div>
+<div class="card"><div class="label">Market</div><p id="marketLine" class="small">Waiting for Kalshi market…</p><p class="small"><b>Signal logic:</b> YES/NO only appears when the experimental model has both sufficient probability and at least an 8¢ estimated edge versus the relevant Kalshi ask. Otherwise it shows PASS. During the final minute, settlement math uses Kalshi live-data samples returned by your Worker.</p><p class="small warn"><b>Experimental:</b> This is a decision-support model, not a guarantee of settlement or profit. Data can lag and the probability model is not validated.</p></div>
 </div>
 <script>
+const API="https://btc15-api.huntergunther52.workers.dev/api/current";
 const $=id=>document.getElementById(id);
-let target=Number(localStorage.target)||0, yesPrice=Number(localStorage.yesPrice)||0;
-let prices=[]; // {t,p}; sampled from live updates, reduced to latest observation per second
-let secSamples=new Map();
-let lastPrice=0;
-
-$("target").value=target||""; $("yesprice").value=yesPrice||"";
-$("save").onclick=()=>{target=Number($("target").value)||0;yesPrice=Number($("yesprice").value)||0;localStorage.target=target;localStorage.yesPrice=yesPrice;render()};
-
-function money(x){return Number.isFinite(x)?x.toLocaleString(undefined,{style:"currency",currency:"USD",maximumFractionDigits:2}):"—"}
-function quarterEnd(now=Date.now()){const q=15*60*1000;return Math.ceil((now+1)/q)*q}
+let market=null, closeMs=0, target=0, yesAsk=null, noAsk=null, officialLatest=0, officialLatestT=0;
+let points=[], secSamples=new Map(), coinbasePrice=0, apiOK=false, fetching=false, nextPoll=0;
+const money=x=>Number.isFinite(x)?x.toLocaleString(undefined,{style:"currency",currency:"USD",maximumFractionDigits:2}):"—";
+const cents=x=>Number.isFinite(x)?Math.round(x*100)+"¢":"—";
 function normalCdf(x){const t=1/(1+.2316419*Math.abs(x)),d=.3989423*Math.exp(-x*x/2);let p=d*t*(.3193815+t*(-.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));return x>0?1-p:p}
-function estimateProb(now,end){
- if(!target||!lastPrice) return null;
- let remain=Math.max(1,(end-now)/1000);
- let recent=prices.filter(x=>x.t>now-120000);
- if(recent.length<5) return lastPrice>target?.55:.45;
- let rets=[]; for(let i=1;i<recent.length;i++){let dt=(recent[i].t-recent[i-1].t)/1000;if(dt>0)rets.push(Math.log(recent[i].p/recent[i-1].p)/Math.sqrt(dt))}
- let sigma=Math.sqrt(rets.reduce((s,x)=>s+x*x,0)/Math.max(1,rets.length)); sigma=Math.max(sigma,0.00002);
- let finalStart=end-60000;
- let locked=[...secSamples.entries()].filter(([s])=>s*1000>=finalStart&&s*1000<end).map(x=>x[1]);
- if(now>=finalStart && locked.length){
-   let n=locked.length, rem=Math.max(0,60-n), need=(target*60-locked.reduce((a,b)=>a+b,0))/Math.max(1,rem);
-   if(rem===0) return locked.reduce((a,b)=>a+b,0)/60>target?1:0;
-   // approximation: future average centered near spot, uncertainty shrinks as samples lock
-   let sd=lastPrice*sigma*Math.sqrt(Math.max(1,rem)/3);
-   return Math.max(.001,Math.min(.999,1-normalCdf((need-lastPrice)/sd)));
- }
- let sd=lastPrice*sigma*Math.sqrt(Math.max(1,remain));
- return Math.max(.001,Math.min(.999,1-normalCdf((target-lastPrice)/sd)));
-}
-function render(){
- const now=Date.now(), end=quarterEnd(now), left=Math.max(0,Math.ceil((end-now)/1000));
- $("timer").textContent=String(Math.floor(left/60)).padStart(2,"0")+":"+String(left%60).padStart(2,"0");
- $("spot").textContent=lastPrice?money(lastPrice):"—"; $("targetOut").textContent=target?money(target):"Set target";
- if(lastPrice&&target){let d=lastPrice-target;$("distance").textContent=(d>=0?"+":"")+money(d);$("distance").className="v "+(d>=0?"good":"bad")}
- let finalStart=end-60000;
- let locked=[...secSamples.entries()].filter(([s])=>s*1000>=finalStart&&s*1000<end).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
- if(now>=finalStart&&locked.length&&target){
-   let sum=locked.reduce((a,b)=>a+b,0), avg=sum/locked.length, rem=Math.max(0,60-locked.length);
-   let need=rem?(target*60-sum)/rem:NaN;
-   $("avg60").textContent=money(avg); $("locked").textContent=locked.length+" / 60";
-   $("needed").textContent=rem?money(need):"Complete";
-   if(rem&&lastPrice){let c=lastPrice-need;$("cushion").textContent=(c>=0?"+":"")+money(c);$("cushion").className="v "+(c>=0?"good":"bad")}
- } else {$("avg60").textContent="Starts at T−60";$("locked").textContent="0 / 60";$("needed").textContent="—";$("cushion").textContent="—"}
- let p15=prices.filter(x=>x.t>=now-15000); if(p15.length>1){let m=lastPrice-p15[0].p;$("momentum").textContent=(m>=0?"+":"")+money(m);$("momentum").className="v "+(m>=0?"good":"bad")}
- let p60=prices.filter(x=>x.t>=now-60000); if(p60.length>3){let r=[];for(let i=1;i<p60.length;i++)r.push(Math.log(p60[i].p/p60[i-1].p));let v=Math.sqrt(r.reduce((s,x)=>s+x*x,0)/r.length)*100;$("vol").textContent=v.toFixed(3)+"%"}
- let prob=estimateProb(now,end);
- if(prob!=null){
-   let pct=prob*100;$("prob").textContent=pct.toFixed(1)+"%";$("probbar").style.width=pct+"%";
-   let sig=pct>=70?"YES":pct<=30?"NO":"WAIT";$("signal").textContent=sig==="WAIT"?"WAIT / LOW EDGE":sig+" LEAN";
-   $("signal").className="sig "+(sig==="YES"?"good":sig==="NO"?"bad":"warn");
-   if(yesPrice){let edge=pct-yesPrice;$("yesOut").textContent=yesPrice.toFixed(0)+"¢";$("edge").textContent=(edge>=0?"+":"")+edge.toFixed(1)+"¢";$("edge").className="v "+(edge>=5?"good":edge<=-5?"bad":"warn")}
- } else {$("prob").textContent="—";$("signal").textContent=target?"WAITING FOR FEED":"SET TARGET";$("yesOut").textContent=yesPrice?yesPrice+"¢":"—";$("edge").textContent="—"}
-}
-function connect(){
- const ws=new WebSocket("wss://advanced-trade-ws.coinbase.com");
- ws.onopen=()=>{ws.send(JSON.stringify({type:"subscribe",product_ids:["BTC-USD"],channel:"ticker"}));$("conn").className="pill live";$("conn").innerHTML='<span class="dot"></span>Live'};
- ws.onmessage=e=>{try{let d=JSON.parse(e.data), ev=d.events||[];for(const event of ev){for(const t of (event.tickers||[])){let p=Number(t.price);if(p){lastPrice=p;let now=Date.now();prices.push({t:now,p});prices=prices.filter(x=>x.t>now-180000);secSamples.set(Math.floor(now/1000),p);for(const s of [...secSamples.keys()])if(s<Math.floor((now-180000)/1000))secSamples.delete(s);render()}}}}catch(_){}};
- ws.onclose=()=>{$("conn").className="pill";$("conn").innerHTML='<span class="dot"></span>Reconnecting';setTimeout(connect,1500)};
- ws.onerror=()=>ws.close();
-}
-
-const KAPI="https://external-api.kalshi.com/trade-api/v2";
-let kalshiMarket=null, kalshiIndexActive=false;
-function harvestIndex(o,out=[]){
- if(!o)return out;if(Array.isArray(o)){o.forEach(x=>harvestIndex(x,out));return out}
- if(typeof o==='object'){
-  let p=Number(o.price??o.value??o.index_value??o.close??o.y), ts=o.ts??o.timestamp??o.time??o.t??o.datetime;
-  if(Number.isFinite(p)&&p>1000&&ts){let t=typeof ts==='number'?(ts<1e12?ts*1000:ts):Date.parse(ts);if(Number.isFinite(t))out.push({t,p})}
-  Object.values(o).forEach(v=>{if(v&&typeof v==='object')harvestIndex(v,out)});
- } return out
-}
-function marketTarget(m){
- let vals=[m.floor_strike,m.strike,m.target,m.custom_strike?.target,m.custom_strike?.value];for(let v of vals){v=Number(v);if(v>1000)return v}
- for(let x of [m.functional_strike,m.subtitle,m.title,m.yes_sub_title]){let z=String(x||'').match(/\$?\s*([0-9]{2,3}(?:,[0-9]{3})+(?:\.[0-9]+)?)/);if(z)return Number(z[1].replaceAll(',',''))}return 0
-}
-async function discoverKalshi(){
- try{
-  let r=await fetch(`${KAPI}/markets?series_ticker=KXBTC15M&status=open&limit=20`,{cache:'no-store'});if(!r.ok)throw 0;let j=await r.json(),now=Date.now();
-  let a=(j.markets||[]).filter(m=>Date.parse(m.close_time||m.expiration_time||0)>now-30000).sort((a,b)=>Date.parse(a.close_time||a.expiration_time)-Date.parse(b.close_time||b.expiration_time));if(!a.length)throw 0;
-  kalshiMarket=a[0];let t=marketTarget(kalshiMarket);if(t){target=t;localStorage.target=t;$('target').value=t}
-  let yp=Number(kalshiMarket.yes_ask_dollars??kalshiMarket.yes_ask??kalshiMarket.last_price_dollars??kalshiMarket.last_price);if(yp>0){if(yp<=1)yp*=100;yesPrice=yp;localStorage.yesPrice=yp;$('yesprice').value=yp.toFixed(1)}
-  $('feedLabel').textContent=`Kalshi ${kalshiMarket.ticker} • target auto-loaded • fetching settlement index…`;render();await pullKalshiIndex();
- }catch(e){$('feedLabel').textContent='⚠ Kalshi auto-data unavailable • Coinbase INDICATIVE fallback';}
-}
-async function pullKalshiIndex(){
- if(!kalshiMarket)return;try{let r=await fetch(`${KAPI}/live_data/events/${encodeURIComponent(kalshiMarket.event_ticker)}?range=15min`,{cache:'no-store'});if(!r.ok)throw 0;let j=await r.json(),g=harvestIndex(j).sort((a,b)=>a.t-b.t);if(!g.length)throw 0;
-  kalshiIndexActive=true;for(let x of g){lastPrice=x.p;prices.push({t:x.t,p:x.p});secSamples.set(Math.floor(x.t/1000),x.p)}prices=prices.filter(x=>x.t>Date.now()-180000);$('feedLabel').textContent=`KALSHI EVENT LIVE DATA • ${kalshiMarket.ticker} • settlement-index track`;render()
- }catch(e){if(!kalshiIndexActive)$('feedLabel').textContent=`⚠ ${kalshiMarket.ticker} auto-loaded • Coinbase INDICATIVE price feed`}
-}
-setInterval(render,250); connect();discoverKalshi();setInterval(discoverKalshi,10000);setInterval(pullKalshiIndex,1000);
-
-if("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js");
-</script>
-</body></html>
+function mergePoints(arr){for(const x of (arr||[])){const t=Number(x.t),p=Number(x.p);if(Number.isFinite(t)&&Number.isFinite(p)&&p>1000){points.push({t,p});secSamples.set(Math.floor(t/1000),p);if(t>=officialLatestT){officialLatestT=t;officialLatest=p}}}const cutoff=Date.now()-240000;points=points.filter(x=>x.t>=cutoff);points.sort((a,b)=>a.t-b.t);const seen=new Set();points=points.filter(x=>{const k=x.t+":"+x.p;if(seen.has(k))return false;seen.add(k);return true});for(const s of [...secSamples.keys()])if(s*1000<cutoff)secSamples.delete(s)}
+function estimateProb(now){if(!target||!officialLatest||!closeMs)return null;const finalStart=closeMs-60000;const locked=[...secSamples].filter(([s])=>s*1000>=finalStart&&s*1000<closeMs).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);const recent=points.filter(x=>x.t>=now-120000&&x.t<=now+2000);if(recent.length<5)return officialLatest>target?.55:.45;let rets=[];for(let i=1;i<recent.length;i++){const dt=(recent[i].t-recent[i-1].t)/1000;if(dt>0&&dt<10)rets.push(Math.log(recent[i].p/recent[i-1].p)/Math.sqrt(dt))}let sigma=Math.sqrt(rets.reduce((s,x)=>s+x*x,0)/Math.max(1,rets.length));sigma=Math.max(sigma,.00002);if(now>=finalStart&&locked.length){const sum=locked.reduce((a,b)=>a+b,0),rem=Math.max(0,60-locked.length);if(rem===0)return sum/60>target?1:0;const need=(target*60-sum)/rem,sd=officialLatest*sigma*Math.sqrt(Math.max(1,rem)/3);return Math.max(.001,Math.min(.999,1-normalCdf((need-officialLatest)/sd)))}const remain=Math.max(1,(closeMs-now)/1000),sd=officialLatest*sigma*Math.sqrt(remain);return Math.max(.001,Math.min(.999,1-normalCdf((target-officialLatest)/sd))}
+function setClass(el,val){el.className="v "+(val>0?"good":val<0?"bad":"")}
+function render(){const now=Date.now(),left=closeMs?Math.max(0,Math.ceil((closeMs-now)/1000)):0;$('timer').textContent=closeMs?String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0'):'—';const stale=officialLatestT?now-officialLatestT>7000:true;const shown=officialLatest||coinbasePrice;$('spot').textContent=shown?money(shown):'—';$('targetOut').textContent=target?money(target):'—';if(shown&&target){const d=shown-target;$('distance').textContent=(d>=0?'+':'')+money(d);setClass($('distance'),d)}
+ const finalStart=closeMs-60000,locked=[...secSamples].filter(([s])=>s*1000>=finalStart&&s*1000<closeMs).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);$('finalCard').className='card rows final'+(closeMs&&left<=60?' hot':'');if(closeMs&&now>=finalStart&&locked.length&&target){const sum=locked.reduce((a,b)=>a+b,0),avg=sum/locked.length,rem=Math.max(0,60-locked.length),need=rem?(target*60-sum)/rem:NaN;$('avg60').textContent=money(avg);$('locked').textContent=locked.length+' / 60';$('needed').textContent=rem?money(need):'Complete';if(rem&&officialLatest){const c=officialLatest-need;$('cushion').textContent=(c>=0?'+':'')+money(c);setClass($('cushion'),c)}}else{$('avg60').textContent='Starts at T−60';$('locked').textContent='0 / 60';$('needed').textContent='—';$('cushion').textContent='—'}
+ const p15=points.filter(x=>x.t>=now-15000);if(p15.length>1){const m=officialLatest-p15[0].p;$('momentum').textContent=(m>=0?'+':'')+money(m);setClass($('momentum'),m)}else $('momentum').textContent='—';const p60=points.filter(x=>x.t>=now-60000);if(p60.length>3){let r=[];for(let i=1;i<p60.length;i++)if(p60[i].p>0&&p60[i-1].p>0)r.push(Math.log(p60[i].p/p60[i-1].p));const v=Math.sqrt(r.reduce((s,x)=>s+x*x,0)/Math.max(1,r.length))*100;$('vol').textContent=v.toFixed(3)+'%'}else $('vol').textContent='—';
+ $('yesOut').textContent=cents(yesAsk);$('noOut').textContent=cents(noAsk);const prob=estimateProb(now);if(prob!=null&&!stale){const pct=prob*100;$('prob').textContent=pct.toFixed(1)+'%';$('probbar').style.width=pct+'%';const ye=Number.isFinite(yesAsk)?prob-yesAsk:null,ne=Number.isFinite(noAsk)?(1-prob)-noAsk:null;let sig='PASS',best=null;if(ye!=null&&ye>=.08&&prob>=.62){sig='YES';best=ye}if(ne!=null&&ne>=.08&&(1-prob)>=.62&&(best==null||ne>best)){sig='NO';best=ne}$('signal').textContent=sig==='PASS'?'PASS / LOW EDGE':sig+' SIGNAL';$('signal').className='sig '+(sig==='YES'?'good':sig==='NO'?'bad':'warn');$('edge').textContent=best!=null?(best>=0?'+':'')+(best*100).toFixed(1)+'¢':'—';$('edge').className=best!=null?'v '+(best>=.08?'good':'warn'):'v'}else{$('prob').textContent='—';$('signal').textContent=stale&&apiOK?'DATA STALE':'WAITING FOR DATA';$('signal').className='sig warn';$('edge').textContent='—'}
+ $('conn').className='pill '+(apiOK&&!stale?'live':'');$('conn').innerHTML='<span class="dot"></span>'+(apiOK?(stale?'Stale':'Live'):'Connecting');if(apiOK){$('feedLabel').textContent=(officialLatest?'Kalshi live-data via your Cloudflare Worker':'Kalshi market live • waiting for index samples')+(stale?' • STALE':'')}else $('feedLabel').textContent=coinbasePrice?'⚠ API unavailable • Coinbase INDICATIVE only':'Connecting to BTC15 API…'}
+async function poll(){if(fetching||Date.now()<nextPoll)return;fetching=true;try{const r=await fetch(API+'?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);const j=await r.json();if(!j.ok)throw new Error(j.error||'API error');apiOK=true;market=j.market||market;target=Number(market?.target)||target;closeMs=Date.parse(market?.close_time)||closeMs;yesAsk=Number(market?.yes_ask);noAsk=Number(market?.no_ask);if(!Number.isFinite(yesAsk))yesAsk=null;if(!Number.isFinite(noAsk))noAsk=null;mergePoints(j.live?.points||[]);if(j.live?.latest)mergePoints([j.live.latest]);$('marketLine').textContent=`${market?.ticker||'KXBTC15M'} • closes ${market?.close_time?new Date(market.close_time).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}):'—'} • target ${money(target)}`;nextPoll=Date.now()+2500}catch(e){apiOK=false;nextPoll=Date.now()+5000;$('marketLine').textContent='API retrying: '+String(e.message||e)}finally{fetching=false;render()}}
+function connectCoinbase(){const ws=new WebSocket('wss://advanced-trade-ws.coinbase.com');ws.onopen=()=>ws.send(JSON.stringify({type:'subscribe',product_ids:['BTC-USD'],channel:'ticker'}));ws.onmessage=e=>{try{const d=JSON.parse(e.data);for(const ev of (d.events||[]))for(const t of (ev.tickers||[])){const p=Number(t.price);if(p)coinbasePrice=p}}catch{}};ws.onclose=()=>setTimeout(connectCoinbase,2000);ws.onerror=()=>ws.close()}
+setInterval(()=>{render();poll()},250);poll();connectCoinbase();if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').then(r=>r.update()).catch(()=>{});
+</script></body></html>

@@ -1,24 +1,13 @@
-# BTC15 Signal — iPhone PWA MVP
+# BTC15 Signal V2
 
-This is a mobile-first installable web app for 15-minute BTC market analysis.
+Upgrade for the existing GitHub Pages app.
 
-## What works now
-- Live BTC-USD indicative feed from Coinbase Advanced Trade WebSocket
-- Quarter-hour countdown
-- Manual Kalshi target + YES price
-- Final-60-second running average from one-second samples
-- Remaining-average break-even calculation
-- 15-second momentum and short volatility
-- Approximate probability + model-vs-market edge
-- PWA/Home Screen support
+- Auto-discovers the current open Kalshi `KXBTC15M` market.
+- Auto-loads the target and available YES price from Kalshi public market data.
+- Attempts Kalshi `GET /live_data/events/{event_ticker}?range=15min` for the event underlying data.
+- Explicitly labels Coinbase as **INDICATIVE** whenever Kalshi event live data is unavailable.
+- Keeps the final-60-second accumulator, required remaining average, cushion, momentum, volatility, and experimental probability model.
 
-## Critical limitation
-Kalshi's official crypto settlement uses the average of 60 one-second CF Benchmarks RTI observations during the expiration minute. This MVP uses Coinbase BTC-USD and MUST NOT be treated as the official settlement feed.
+Upload all five files to the root of the existing `btc15-signal` repository and replace the old versions.
 
-## Put it on your iPhone
-The app must be served over HTTPS for Home Screen/PWA behavior.
-1. Upload this folder to any static HTTPS host (GitHub Pages, Cloudflare Pages, Netlify, Vercel, etc.).
-2. Open the HTTPS URL in Safari on iPhone.
-3. Share -> Add to Home Screen.
-
-No Kalshi private API key is stored in this build.
+**Important:** probability remains experimental/unvalidated. Feed source is shown in-app and must be checked before relying on settlement calculations.

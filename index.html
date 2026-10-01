@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#080b10"/>
 <link rel="manifest" href="manifest.webmanifest"/>
 <link rel="apple-touch-icon" href="icon.svg"/>
-<title>BTC15 Signal</title>
+<title>BTC15 Signal V2</title>
 <style>
 :root{--bg:#080b10;--card:#111722;--muted:#8c98aa;--text:#f4f7fb;--green:#28d17c;--red:#ff5f6d;--amber:#ffbd3e;--line:#222c3b}
 *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",Inter,Arial,sans-serif}
@@ -28,14 +28,14 @@ button{width:100%;border:0;border-radius:13px;padding:13px;font-size:15px;font-w
 </head>
 <body>
 <div class="app">
-<header><div class="brand">BTC15 SIGNAL</div><div id="conn" class="pill"><span class="dot"></span>Connecting</div></header>
+<header><div class="brand">BTC15 SIGNAL <span style="color:#62a8ff">V2</span></div><div id="conn" class="pill"><span class="dot"></span>Connecting</div></header>
 
 <div class="card">
  <div class="topgrid">
   <div><div class="label">BTC indicative</div><div id="spot" class="big">—</div></div>
   <div class="timer"><div class="label">Window ends in</div><div id="timer" class="big">—</div></div>
  </div>
- <div class="mode">Coinbase BTC-USD feed • official Kalshi settlement uses CF Benchmarks RTI</div>
+ <div class="mode"><span id="feedLabel">Connecting to Kalshi market + settlement-index data…</span></div>
 </div>
 
 <div class="card signal">
@@ -59,19 +59,19 @@ button{width:100%;border:0;border-radius:13px;padding:13px;font-size:15px;font-w
 </div>
 
 <div class="card">
- <div class="label">Trade inputs</div>
+ <div class="label">Fallback inputs (auto-filled when Kalshi API is available)</div>
  <div class="inputs">
   <div><label class="small">Kalshi target ($)</label><input id="target" inputmode="decimal" placeholder="e.g. 67425"/></div>
   <div><label class="small">YES price (¢)</label><input id="yesprice" inputmode="decimal" placeholder="e.g. 61"/></div>
  </div>
  <button id="save">Update</button>
- <p class="small">Enter the exact target shown in the current Kalshi 15-minute BTC market. YES price is optional and is used only to calculate model-vs-market edge.</p>
+ <p class="small">V2 automatically discovers the open KXBTC15M market and target. These fields remain as a fallback if the public API is unavailable in Safari.</p>
 </div>
 
 <div class="card">
  <div class="label">How to read it</div>
  <p class="small"><b>Avg needed</b> is the average BTC price the remaining seconds would need for the full final-minute average to finish exactly at your target. During the last 60 seconds, the calculation progressively locks in observed one-second samples.</p>
- <p class="small warn"><b>Important:</b> this MVP uses Coinbase BTC-USD as an indicative real-time feed. Kalshi states crypto contracts settle from the 60 one-second CF Benchmarks RTI observations in the expiration minute. Do not treat this app's displayed average as the official settlement value.</p>
+ <p class="small warn"><b>Important:</b> V2 attempts Kalshi event live-data first. If Safari cannot consume that feed, the app explicitly labels Coinbase as INDICATIVE. Never treat an indicative fallback as the official settlement value.</p>
 </div>
 </div>
 <script>
@@ -137,7 +137,37 @@ function connect(){
  ws.onclose=()=>{$("conn").className="pill";$("conn").innerHTML='<span class="dot"></span>Reconnecting';setTimeout(connect,1500)};
  ws.onerror=()=>ws.close();
 }
-setInterval(render,250); connect();
+
+const KAPI="https://external-api.kalshi.com/trade-api/v2";
+let kalshiMarket=null, kalshiIndexActive=false;
+function harvestIndex(o,out=[]){
+ if(!o)return out;if(Array.isArray(o)){o.forEach(x=>harvestIndex(x,out));return out}
+ if(typeof o==='object'){
+  let p=Number(o.price??o.value??o.index_value??o.close??o.y), ts=o.ts??o.timestamp??o.time??o.t??o.datetime;
+  if(Number.isFinite(p)&&p>1000&&ts){let t=typeof ts==='number'?(ts<1e12?ts*1000:ts):Date.parse(ts);if(Number.isFinite(t))out.push({t,p})}
+  Object.values(o).forEach(v=>{if(v&&typeof v==='object')harvestIndex(v,out)});
+ } return out
+}
+function marketTarget(m){
+ let vals=[m.floor_strike,m.strike,m.target,m.custom_strike?.target,m.custom_strike?.value];for(let v of vals){v=Number(v);if(v>1000)return v}
+ for(let x of [m.functional_strike,m.subtitle,m.title,m.yes_sub_title]){let z=String(x||'').match(/\$?\s*([0-9]{2,3}(?:,[0-9]{3})+(?:\.[0-9]+)?)/);if(z)return Number(z[1].replaceAll(',',''))}return 0
+}
+async function discoverKalshi(){
+ try{
+  let r=await fetch(`${KAPI}/markets?series_ticker=KXBTC15M&status=open&limit=20`,{cache:'no-store'});if(!r.ok)throw 0;let j=await r.json(),now=Date.now();
+  let a=(j.markets||[]).filter(m=>Date.parse(m.close_time||m.expiration_time||0)>now-30000).sort((a,b)=>Date.parse(a.close_time||a.expiration_time)-Date.parse(b.close_time||b.expiration_time));if(!a.length)throw 0;
+  kalshiMarket=a[0];let t=marketTarget(kalshiMarket);if(t){target=t;localStorage.target=t;$('target').value=t}
+  let yp=Number(kalshiMarket.yes_ask_dollars??kalshiMarket.yes_ask??kalshiMarket.last_price_dollars??kalshiMarket.last_price);if(yp>0){if(yp<=1)yp*=100;yesPrice=yp;localStorage.yesPrice=yp;$('yesprice').value=yp.toFixed(1)}
+  $('feedLabel').textContent=`Kalshi ${kalshiMarket.ticker} • target auto-loaded • fetching settlement index…`;render();await pullKalshiIndex();
+ }catch(e){$('feedLabel').textContent='⚠ Kalshi auto-data unavailable • Coinbase INDICATIVE fallback';}
+}
+async function pullKalshiIndex(){
+ if(!kalshiMarket)return;try{let r=await fetch(`${KAPI}/live_data/events/${encodeURIComponent(kalshiMarket.event_ticker)}?range=15min`,{cache:'no-store'});if(!r.ok)throw 0;let j=await r.json(),g=harvestIndex(j).sort((a,b)=>a.t-b.t);if(!g.length)throw 0;
+  kalshiIndexActive=true;for(let x of g){lastPrice=x.p;prices.push({t:x.t,p:x.p});secSamples.set(Math.floor(x.t/1000),x.p)}prices=prices.filter(x=>x.t>Date.now()-180000);$('feedLabel').textContent=`KALSHI EVENT LIVE DATA • ${kalshiMarket.ticker} • settlement-index track`;render()
+ }catch(e){if(!kalshiIndexActive)$('feedLabel').textContent=`⚠ ${kalshiMarket.ticker} auto-loaded • Coinbase INDICATIVE price feed`}
+}
+setInterval(render,250); connect();discoverKalshi();setInterval(discoverKalshi,10000);setInterval(pullKalshiIndex,1000);
+
 if("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js");
 </script>
 </body></html>

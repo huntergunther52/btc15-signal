@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="theme-color" content="#080b10"/>
+<link rel="manifest" href="manifest.webmanifest"/>
+<link rel="apple-touch-icon" href="icon.svg"/>
+<title>BTC15 Signal</title>
+<style>
+:root{--bg:#080b10;--card:#111722;--muted:#8c98aa;--text:#f4f7fb;--green:#28d17c;--red:#ff5f6d;--amber:#ffbd3e;--line:#222c3b}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",Inter,Arial,sans-serif}
+.app{max-width:520px;margin:auto;padding:env(safe-area-inset-top) 14px calc(28px + env(safe-area-inset-bottom))}
+header{display:flex;align-items:center;justify-content:space-between;padding:16px 2px 10px}
+.brand{font-size:18px;font-weight:800;letter-spacing:.3px}.pill{font-size:12px;padding:6px 9px;border-radius:999px;background:#17202d;color:#b8c4d6}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;margin:10px 0;box-shadow:0 12px 30px rgba(0,0,0,.18)}
+.topgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.9px}.big{font-size:28px;font-weight:800;margin-top:3px}.timer{text-align:right}.timer .big{font-variant-numeric:tabular-nums}
+.signal{text-align:center;padding:20px 14px}.prob{font-size:60px;font-weight:900;line-height:1}.sig{font-size:17px;font-weight:800;margin-top:8px}
+.bar{height:10px;border-radius:99px;background:#1b2432;overflow:hidden;margin:16px 0 4px}.bar>div{height:100%;width:50%;background:var(--amber);transition:.3s}
+.rows .row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}.rows .row:last-child{border:0}.v{font-weight:750;font-variant-numeric:tabular-nums}
+input{width:100%;background:#0b1018;border:1px solid #2a3547;border-radius:12px;color:white;padding:12px;font-size:16px;margin-top:6px;outline:none}
+.inputs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button{width:100%;border:0;border-radius:13px;padding:13px;font-size:15px;font-weight:800;background:#f4f7fb;color:#0a0d12;margin-top:12px}
+.small{font-size:12px;color:var(--muted);line-height:1.45}.good{color:var(--green)}.bad{color:var(--red)}.warn{color:var(--amber)}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red);margin-right:6px}.live .dot{background:var(--green)}
+.mode{font-size:12px;color:var(--muted);text-align:center;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div class="brand">BTC15 SIGNAL</div><div id="conn" class="pill"><span class="dot"></span>Connecting</div></header>
+
+<div class="card">
+ <div class="topgrid">
+  <div><div class="label">BTC indicative</div><div id="spot" class="big">—</div></div>
+  <div class="timer"><div class="label">Window ends in</div><div id="timer" class="big">—</div></div>
+ </div>
+ <div class="mode">Coinbase BTC-USD feed • official Kalshi settlement uses CF Benchmarks RTI</div>
+</div>
+
+<div class="card signal">
+ <div class="label">Estimated YES probability</div>
+ <div id="prob" class="prob">—</div>
+ <div class="bar"><div id="probbar"></div></div>
+ <div id="signal" class="sig">WAITING FOR DATA</div>
+</div>
+
+<div class="card rows">
+ <div class="row"><span class="label">Target</span><span id="targetOut" class="v">—</span></div>
+ <div class="row"><span class="label">Distance</span><span id="distance" class="v">—</span></div>
+ <div class="row"><span class="label">Final-60s running avg</span><span id="avg60" class="v">Not started</span></div>
+ <div class="row"><span class="label">Seconds locked</span><span id="locked" class="v">0 / 60</span></div>
+ <div class="row"><span class="label">Avg needed from here</span><span id="needed" class="v">—</span></div>
+ <div class="row"><span class="label">Cushion vs needed</span><span id="cushion" class="v">—</span></div>
+ <div class="row"><span class="label">15s momentum</span><span id="momentum" class="v">—</span></div>
+ <div class="row"><span class="label">Short vol</span><span id="vol" class="v">—</span></div>
+ <div class="row"><span class="label">Kalshi YES price</span><span id="yesOut" class="v">—</span></div>
+ <div class="row"><span class="label">Model edge</span><span id="edge" class="v">—</span></div>
+</div>
+
+<div class="card">
+ <div class="label">Trade inputs</div>
+ <div class="inputs">
+  <div><label class="small">Kalshi target ($)</label><input id="target" inputmode="decimal" placeholder="e.g. 67425"/></div>
+  <div><label class="small">YES price (¢)</label><input id="yesprice" inputmode="decimal" placeholder="e.g. 61"/></div>
+ </div>
+ <button id="save">Update</button>
+ <p class="small">Enter the exact target shown in the current Kalshi 15-minute BTC market. YES price is optional and is used only to calculate model-vs-market edge.</p>
+</div>
+
+<div class="card">
+ <div class="label">How to read it</div>
+ <p class="small"><b>Avg needed</b> is the average BTC price the remaining seconds would need for the full final-minute average to finish exactly at your target. During the last 60 seconds, the calculation progressively locks in observed one-second samples.</p>
+ <p class="small warn"><b>Important:</b> this MVP uses Coinbase BTC-USD as an indicative real-time feed. Kalshi states crypto contracts settle from the 60 one-second CF Benchmarks RTI observations in the expiration minute. Do not treat this app's displayed average as the official settlement value.</p>
+</div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+let target=Number(localStorage.target)||0, yesPrice=Number(localStorage.yesPrice)||0;
+let prices=[]; // {t,p}; sampled from live updates, reduced to latest observation per second
+let secSamples=new Map();
+let lastPrice=0;
+
+$("target").value=target||""; $("yesprice").value=yesPrice||"";
+$("save").onclick=()=>{target=Number($("target").value)||0;yesPrice=Number($("yesprice").value)||0;localStorage.target=target;localStorage.yesPrice=yesPrice;render()};
+
+function money(x){return Number.isFinite(x)?x.toLocaleString(undefined,{style:"currency",currency:"USD",maximumFractionDigits:2}):"—"}
+function quarterEnd(now=Date.now()){const q=15*60*1000;return Math.ceil((now+1)/q)*q}
+function normalCdf(x){const t=1/(1+.2316419*Math.abs(x)),d=.3989423*Math.exp(-x*x/2);let p=d*t*(.3193815+t*(-.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));return x>0?1-p:p}
+function estimateProb(now,end){
+ if(!target||!lastPrice) return null;
+ let remain=Math.max(1,(end-now)/1000);
+ let recent=prices.filter(x=>x.t>now-120000);
+ if(recent.length<5) return lastPrice>target?.55:.45;
+ let rets=[]; for(let i=1;i<recent.length;i++){let dt=(recent[i].t-recent[i-1].t)/1000;if(dt>0)rets.push(Math.log(recent[i].p/recent[i-1].p)/Math.sqrt(dt))}
+ let sigma=Math.sqrt(rets.reduce((s,x)=>s+x*x,0)/Math.max(1,rets.length)); sigma=Math.max(sigma,0.00002);
+ let finalStart=end-60000;
+ let locked=[...secSamples.entries()].filter(([s])=>s*1000>=finalStart&&s*1000<end).map(x=>x[1]);
+ if(now>=finalStart && locked.length){
+   let n=locked.length, rem=Math.max(0,60-n), need=(target*60-locked.reduce((a,b)=>a+b,0))/Math.max(1,rem);
+   if(rem===0) return locked.reduce((a,b)=>a+b,0)/60>target?1:0;
+   // approximation: future average centered near spot, uncertainty shrinks as samples lock
+   let sd=lastPrice*sigma*Math.sqrt(Math.max(1,rem)/3);
+   return Math.max(.001,Math.min(.999,1-normalCdf((need-lastPrice)/sd)));
+ }
+ let sd=lastPrice*sigma*Math.sqrt(Math.max(1,remain));
+ return Math.max(.001,Math.min(.999,1-normalCdf((target-lastPrice)/sd)));
+}
+function render(){
+ const now=Date.now(), end=quarterEnd(now), left=Math.max(0,Math.ceil((end-now)/1000));
+ $("timer").textContent=String(Math.floor(left/60)).padStart(2,"0")+":"+String(left%60).padStart(2,"0");
+ $("spot").textContent=lastPrice?money(lastPrice):"—"; $("targetOut").textContent=target?money(target):"Set target";
+ if(lastPrice&&target){let d=lastPrice-target;$("distance").textContent=(d>=0?"+":"")+money(d);$("distance").className="v "+(d>=0?"good":"bad")}
+ let finalStart=end-60000;
+ let locked=[...secSamples.entries()].filter(([s])=>s*1000>=finalStart&&s*1000<end).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
+ if(now>=finalStart&&locked.length&&target){
+   let sum=locked.reduce((a,b)=>a+b,0), avg=sum/locked.length, rem=Math.max(0,60-locked.length);
+   let need=rem?(target*60-sum)/rem:NaN;
+   $("avg60").textContent=money(avg); $("locked").textContent=locked.length+" / 60";
+   $("needed").textContent=rem?money(need):"Complete";
+   if(rem&&lastPrice){let c=lastPrice-need;$("cushion").textContent=(c>=0?"+":"")+money(c);$("cushion").className="v "+(c>=0?"good":"bad")}
+ } else {$("avg60").textContent="Starts at T−60";$("locked").textContent="0 / 60";$("needed").textContent="—";$("cushion").textContent="—"}
+ let p15=prices.filter(x=>x.t>=now-15000); if(p15.length>1){let m=lastPrice-p15[0].p;$("momentum").textContent=(m>=0?"+":"")+money(m);$("momentum").className="v "+(m>=0?"good":"bad")}
+ let p60=prices.filter(x=>x.t>=now-60000); if(p60.length>3){let r=[];for(let i=1;i<p60.length;i++)r.push(Math.log(p60[i].p/p60[i-1].p));let v=Math.sqrt(r.reduce((s,x)=>s+x*x,0)/r.length)*100;$("vol").textContent=v.toFixed(3)+"%"}
+ let prob=estimateProb(now,end);
+ if(prob!=null){
+   let pct=prob*100;$("prob").textContent=pct.toFixed(1)+"%";$("probbar").style.width=pct+"%";
+   let sig=pct>=70?"YES":pct<=30?"NO":"WAIT";$("signal").textContent=sig==="WAIT"?"WAIT / LOW EDGE":sig+" LEAN";
+   $("signal").className="sig "+(sig==="YES"?"good":sig==="NO"?"bad":"warn");
+   if(yesPrice){let edge=pct-yesPrice;$("yesOut").textContent=yesPrice.toFixed(0)+"¢";$("edge").textContent=(edge>=0?"+":"")+edge.toFixed(1)+"¢";$("edge").className="v "+(edge>=5?"good":edge<=-5?"bad":"warn")}
+ } else {$("prob").textContent="—";$("signal").textContent=target?"WAITING FOR FEED":"SET TARGET";$("yesOut").textContent=yesPrice?yesPrice+"¢":"—";$("edge").textContent="—"}
+}
+function connect(){
+ const ws=new WebSocket("wss://advanced-trade-ws.coinbase.com");
+ ws.onopen=()=>{ws.send(JSON.stringify({type:"subscribe",product_ids:["BTC-USD"],channel:"ticker"}));$("conn").className="pill live";$("conn").innerHTML='<span class="dot"></span>Live'};
+ ws.onmessage=e=>{try{let d=JSON.parse(e.data), ev=d.events||[];for(const event of ev){for(const t of (event.tickers||[])){let p=Number(t.price);if(p){lastPrice=p;let now=Date.now();prices.push({t:now,p});prices=prices.filter(x=>x.t>now-180000);secSamples.set(Math.floor(now/1000),p);for(const s of [...secSamples.keys()])if(s<Math.floor((now-180000)/1000))secSamples.delete(s);render()}}}}catch(_){}};
+ ws.onclose=()=>{$("conn").className="pill";$("conn").innerHTML='<span class="dot"></span>Reconnecting';setTimeout(connect,1500)};
+ ws.onerror=()=>ws.close();
+}
+setInterval(render,250); connect();
+if("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js");
+</script>
+</body></html>

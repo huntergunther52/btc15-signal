@@ -1,0 +1,16 @@
+{
+  "name": "BTC15 Signal",
+  "short_name": "BTC15",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#080b10",
+  "theme_color": "#080b10",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

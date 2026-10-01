@@ -4,61 +4,405 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
 <meta name="theme-color" content="#080b10"/>
-<link rel="manifest" href="manifest.webmanifest"/>
-<link rel="apple-touch-icon" href="icon.svg"/>
-<title>BTC15 Signal V3</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon.svg">
+<title>BTC15 Signal V3.1</title>
+
 <style>
-:root{--bg:#080b10;--card:#111722;--muted:#8c98aa;--text:#f4f7fb;--green:#28d17c;--red:#ff5f6d;--amber:#ffbd3e;--blue:#62a8ff;--line:#222c3b}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",Inter,Arial,sans-serif}.app{max-width:520px;margin:auto;padding:env(safe-area-inset-top) 14px calc(28px + env(safe-area-inset-bottom))}header{display:flex;align-items:center;justify-content:space-between;padding:16px 2px 10px}.brand{font-size:18px;font-weight:850;letter-spacing:.3px}.pill{font-size:12px;padding:6px 9px;border-radius:999px;background:#17202d;color:#b8c4d6}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red);margin-right:6px}.live .dot{background:var(--green)}.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;margin:10px 0;box-shadow:0 12px 30px rgba(0,0,0,.18)}.topgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.9px}.big{font-size:28px;font-weight:850;margin-top:3px}.timer{text-align:right}.timer .big,.v{font-variant-numeric:tabular-nums}.mode{font-size:12px;color:var(--muted);text-align:center;margin-top:9px;line-height:1.4}.signal{text-align:center;padding:20px 14px}.prob{font-size:58px;font-weight:900;line-height:1}.sig{font-size:18px;font-weight:900;margin-top:8px}.bar{height:10px;border-radius:99px;background:#1b2432;overflow:hidden;margin:16px 0 4px}.bar>div{height:100%;width:50%;background:var(--amber);transition:.3s}.rows .row{display:flex;justify-content:space-between;gap:16px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}.rows .row:last-child{border:0}.v{font-weight:780;text-align:right}.good{color:var(--green)}.bad{color:var(--red)}.warn{color:var(--amber)}.blue{color:var(--blue)}.small{font-size:12px;color:var(--muted);line-height:1.5}.statusline{display:flex;justify-content:space-between;gap:10px;margin-top:10px}.statusbox{flex:1;background:#0b1018;border:1px solid var(--line);border-radius:12px;padding:10px}.statusbox b{display:block;font-size:14px;margin-top:3px}.final{border-color:#3a4659}.final.hot{border-color:var(--amber);box-shadow:0 0 0 1px rgba(255,189,62,.15),0 12px 30px rgba(0,0,0,.18)}
+:root{
+  --bg:#080b10;
+  --card:#111722;
+  --card2:#0b1119;
+  --line:#273244;
+  --text:#f4f7fb;
+  --muted:#8c99ad;
+  --green:#36d399;
+  --red:#fb6471;
+  --yellow:#ffbd3d;
+  --blue:#4b9cff;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+.app{
+  max-width:720px;
+  margin:auto;
+  padding:28px 18px 60px;
+}
+header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:22px;
+}
+.brand{
+  font-weight:900;
+  font-size:24px;
+  letter-spacing:.5px;
+}
+.brand span{color:var(--blue)}
+.status{
+  padding:9px 13px;
+  border-radius:999px;
+  background:#172131;
+  color:var(--muted);
+  font-size:14px;
+}
+.dot{
+  display:inline-block;
+  width:9px;height:9px;
+  border-radius:50%;
+  margin-right:7px;
+  background:var(--red);
+}
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:20px;
+  margin-bottom:16px;
+}
+.label{
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:1.5px;
+  font-size:12px;
+}
+.topgrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+.big{
+  font-size:31px;
+  font-weight:850;
+  margin-top:8px;
+}
+.right{text-align:right}
+.sub{
+  color:var(--muted);
+  font-size:14px;
+  margin-top:8px;
+}
+.signal{text-align:center}
+.prob{
+  font-size:52px;
+  font-weight:900;
+  margin:10px 0 5px;
+}
+.bar{
+  height:12px;
+  background:#1c2838;
+  border-radius:99px;
+  overflow:hidden;
+  margin:18px 0;
+}
+.fill{
+  height:100%;
+  width:50%;
+  background:var(--yellow);
+  transition:.25s;
+}
+.call{
+  font-size:25px;
+  font-weight:900;
+  margin:10px 0 18px;
+}
+.metrics3{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+.metric{
+  background:var(--card2);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:14px 8px;
+  text-align:center;
+}
+.metric .v{
+  font-size:20px;
+  font-weight:800;
+  margin-top:7px;
+}
+.rows .row{
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+  padding:14px 0;
+  border-bottom:1px solid #202a39;
+}
+.rows .row:last-child{border-bottom:0}
+.rows .value{
+  font-weight:800;
+  text-align:right;
+}
+.marketTitle{
+  font-size:17px;
+  font-weight:750;
+  margin-top:10px;
+}
+.good{color:var(--green)}
+.bad{color:var(--red)}
+.warn{color:var(--yellow)}
+.small{
+  color:var(--muted);
+  font-size:12px;
+  margin-top:10px;
+  line-height:1.4;
+}
 </style>
 </head>
-<body><div class="app">
-<header><div class="brand">BTC15 SIGNAL <span class="blue">V3</span></div><div id="conn" class="pill"><span class="dot"></span>Connecting</div></header>
-<div class="card"><div class="topgrid"><div><div class="label">Kalshi BTC index</div><div id="spot" class="big">—</div></div><div class="timer"><div class="label">Window ends in</div><div id="timer" class="big">—</div></div></div><div class="mode" id="feedLabel">Connecting to BTC15 API…</div></div>
-<div class="card signal"><div class="label">Estimated YES probability</div><div id="prob" class="prob">—</div><div class="bar"><div id="probbar"></div></div><div id="signal" class="sig">WAITING FOR DATA</div><div class="statusline"><div class="statusbox"><span class="label">YES ask</span><b id="yesOut">—</b></div><div class="statusbox"><span class="label">NO ask</span><b id="noOut">—</b></div><div class="statusbox"><span class="label">Best edge</span><b id="edge">—</b></div></div></div>
-<div id="finalCard" class="card rows final"><div class="row"><span class="label">Target</span><span id="targetOut" class="v">—</span></div><div class="row"><span class="label">Distance now</span><span id="distance" class="v">—</span></div><div class="row"><span class="label">Final-60s running avg</span><span id="avg60" class="v">Starts at T−60</span></div><div class="row"><span class="label">Seconds locked</span><span id="locked" class="v">0 / 60</span></div><div class="row"><span class="label">Avg needed from here</span><span id="needed" class="v">—</span></div><div class="row"><span class="label">Cushion vs needed</span><span id="cushion" class="v">—</span></div><div class="row"><span class="label">15s momentum</span><span id="momentum" class="v">—</span></div><div class="row"><span class="label">Short vol</span><span id="vol" class="v">—</span></div></div>
-<div class="card"><div class="label">Market</div><p id="marketLine" class="small">Waiting for Kalshi market…</p><p class="small"><b>Signal logic:</b> YES/NO only appears when the experimental model has both sufficient probability and at least an 8¢ estimated edge versus the relevant Kalshi ask. Otherwise it shows PASS. During the final minute, settlement math uses Kalshi live-data samples returned by your Worker.</p><p class="small warn"><b>Experimental:</b> This is a decision-support model, not a guarantee of settlement or profit. Data can lag and the probability model is not validated.</p></div>
+
+<body>
+<div class="app">
+
+<header>
+  <div class="brand">BTC15 SIGNAL <span>V3.1</span></div>
+  <div class="status"><span class="dot" id="dot"></span><span id="connection">Connecting</span></div>
+</header>
+
+<div class="card">
+  <div class="topgrid">
+    <div>
+      <div class="label">Kalshi BTC Index</div>
+      <div class="big" id="price">—</div>
+      <div class="sub" id="priceTime">Waiting for live price</div>
+    </div>
+    <div class="right">
+      <div class="label">Window Ends In</div>
+      <div class="big" id="timer">—</div>
+      <div class="sub" id="closeTime">—</div>
+    </div>
+  </div>
 </div>
+
+<div class="card signal">
+  <div class="label">Estimated Yes Probability</div>
+  <div class="prob" id="prob">—</div>
+  <div class="bar"><div class="fill" id="fill"></div></div>
+  <div class="call" id="call">WAITING FOR DATA</div>
+
+  <div class="metrics3">
+    <div class="metric">
+      <div class="label">Yes Ask</div>
+      <div class="v" id="yesAsk">—</div>
+    </div>
+    <div class="metric">
+      <div class="label">No Ask</div>
+      <div class="v" id="noAsk">—</div>
+    </div>
+    <div class="metric">
+      <div class="label">Best Edge</div>
+      <div class="v" id="edge">—</div>
+    </div>
+  </div>
+</div>
+
+<div class="card rows">
+  <div class="row"><span class="label">Target</span><span class="value" id="target">—</span></div>
+  <div class="row"><span class="label">Distance Now</span><span class="value" id="distance">—</span></div>
+  <div class="row"><span class="label">Final-60s Running Avg</span><span class="value" id="avg60">Starts at T−60</span></div>
+  <div class="row"><span class="label">Seconds Locked</span><span class="value" id="locked">0 / 60</span></div>
+  <div class="row"><span class="label">Avg Needed From Here</span><span class="value" id="needed">—</span></div>
+  <div class="row"><span class="label">Cushion vs Needed</span><span class="value" id="cushion">—</span></div>
+  <div class="row"><span class="label">15s Momentum</span><span class="value" id="momentum">—</span></div>
+  <div class="row"><span class="label">Short Vol</span><span class="value" id="vol">—</span></div>
+</div>
+
+<div class="card">
+  <div class="label">Market</div>
+  <div class="marketTitle" id="market">Waiting for Kalshi market…</div>
+  <div class="small" id="ticker"></div>
+</div>
+
+<div class="small">
+Decision-support only. Probability is a model estimate, not a guarantee. Final settlement depends on Kalshi's official rules and data.
+</div>
+
+</div>
+
 <script>
-const API="https://btc15-api.huntergunther52.workers.dev/api/current";
-const $=id=>document.getElementById(id);
-let market=null, closeMs=0, target=0, yesAsk=null, noAsk=null, officialLatest=0, officialLatestT=0;
-let points=[], secSamples=new Map(), coinbasePrice=0, apiOK=false, fetching=false, nextPoll=0;
-const money=x=>Number.isFinite(x)?x.toLocaleString(undefined,{style:"currency",currency:"USD",maximumFractionDigits:2}):"—";
-const cents=x=>Number.isFinite(x)?Math.round(x*100)+"¢":"—";
-function normalCdf(x){const t=1/(1+0.2316419*Math.abs(x));const d=0.3989423*Math.exp(-x*x/2);const poly=t*(0.3193815+t*(-0.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));const tail=d*poly;return x>=0?1-tail:tail}
-function mergePoints(arr){for(const x of (arr||[])){const t=Number(x.t),p=Number(x.p);if(Number.isFinite(t)&&Number.isFinite(p)&&p>1000){points.push({t,p});secSamples.set(Math.floor(t/1000),p);if(t>=officialLatestT){officialLatestT=t;officialLatest=p}}}const cutoff=Date.now()-240000;points=points.filter(x=>x.t>=cutoff);points.sort((a,b)=>a.t-b.t);const seen=new Set();points=points.filter(x=>{const k=x.t+":"+x.p;if(seen.has(k))return false;seen.add(k);return true});for(const s of [...secSamples.keys()])if(s*1000<cutoff)secSamples.delete(s)}
-function estimateProb(now){
-  if(!target||!officialLatest||!closeMs) return null;
-  const finalStart=closeMs-60000;
-  const locked=[...secSamples].filter(([sec])=>sec*1000>=finalStart&&sec*1000<closeMs).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
-  const recent=points.filter(x=>x.t>=now-120000&&x.t<=now+2000);
-  if(recent.length<5) return officialLatest>target?0.55:0.45;
-  const rets=[];
-  for(let i=1;i<recent.length;i++){
-    const dt=(recent[i].t-recent[i-1].t)/1000;
-    if(dt>0&&dt<10) rets.push(Math.log(recent[i].p/recent[i-1].p)/Math.sqrt(dt));
+const API = "https://btc15-api.huntergunther52.workers.dev/api/current";
+
+let data = null;
+
+const $ = id => document.getElementById(id);
+
+const money = x =>
+  Number.isFinite(x)
+    ? "$" + x.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})
+    : "—";
+
+const pct = x =>
+  Number.isFinite(x) ? Math.round(x*100) + "%" : "—";
+
+function clamp(x,a,b){return Math.max(a,Math.min(b,x))}
+
+function calc(){
+  if(!data?.market || !data?.live?.available || !data.live.points?.length) return;
+
+  const m=data.market;
+  const pts=data.live.points;
+  const latest=pts[pts.length-1];
+  const price=latest.p;
+  const target=Number(m.target);
+  const close=Date.parse(m.close_time);
+  const now=Date.now();
+  const remaining=Math.max(0,(close-now)/1000);
+
+  $("price").textContent=money(price);
+  $("target").textContent=money(target);
+  $("distance").textContent=
+    Number.isFinite(target) ? (price-target>=0?"+":"")+money(Math.abs(price-target)).replace("$","$") : "—";
+
+  $("yesAsk").textContent=pct(m.yes_ask);
+  $("noAsk").textContent=pct(m.no_ask);
+
+  const recent=pts.filter(x=>x.t>=latest.t-15000);
+  let momentum=0;
+  if(recent.length>1) momentum=recent[recent.length-1].p-recent[0].p;
+
+  $("momentum").textContent=(momentum>=0?"+":"")+money(Math.abs(momentum));
+  $("momentum").className="value "+(momentum>=0?"good":"bad");
+
+  const short=pts.slice(-30);
+  const mean=short.reduce((s,x)=>s+x.p,0)/short.length;
+  const variance=short.reduce((s,x)=>s+(x.p-mean)**2,0)/Math.max(1,short.length);
+  const vol=Math.sqrt(variance);
+
+  $("vol").textContent="$"+vol.toFixed(2);
+
+  let finalPts=[];
+  if(remaining<=60){
+    const start=close-60000;
+    finalPts=pts.filter(x=>x.t>=start && x.t<=close);
   }
-  let sigma=Math.sqrt(rets.reduce((sum,x)=>sum+x*x,0)/Math.max(1,rets.length));
-  sigma=Math.max(sigma,0.00002);
-  if(now>=finalStart&&locked.length){
-    const sum=locked.reduce((a,b)=>a+b,0), rem=Math.max(0,60-locked.length);
-    if(rem===0) return sum/60>target?1:0;
-    const need=(target*60-sum)/rem;
-    const sd=officialLatest*sigma*Math.sqrt(Math.max(1,rem)/3);
-    return Math.max(0.001,Math.min(0.999,1-normalCdf((need-officialLatest)/sd)));
+
+  if(finalPts.length){
+    const avg=finalPts.reduce((s,x)=>s+x.p,0)/finalPts.length;
+    $("avg60").textContent=money(avg);
+
+    const locked=Math.min(60,finalPts.length);
+    $("locked").textContent=locked+" / 60";
+
+    if(Number.isFinite(target) && locked<60){
+      const sum=finalPts.reduce((s,x)=>s+x.p,0);
+      const needed=(target*60-sum)/(60-locked);
+      $("needed").textContent=money(needed);
+
+      const cushion=price-needed;
+      $("cushion").textContent=(cushion>=0?"+":"-")+"$"+Math.abs(cushion).toFixed(2);
+      $("cushion").className="value "+(cushion>=0?"good":"bad");
+    }else{
+      $("needed").textContent="Locked";
+    }
+  }else{
+    $("avg60").textContent="Starts at T−60";
+    $("locked").textContent="0 / 60";
+    $("needed").textContent="—";
+    $("cushion").textContent="—";
   }
-  const remain=Math.max(1,(closeMs-now)/1000);
-  const sd=officialLatest*sigma*Math.sqrt(remain);
-  return Math.max(0.001,Math.min(0.999,1-normalCdf((target-officialLatest)/sd)));
+
+  let score=0;
+
+  if(Number.isFinite(target)){
+    const dist=price-target;
+    const scale=Math.max(8,vol*3);
+    score=1/(1+Math.exp(-dist/scale));
+
+    if(momentum>0) score+=0.04;
+    if(momentum<0) score-=0.04;
+
+    if(finalPts.length && remaining<60){
+      const avg=finalPts.reduce((s,x)=>s+x.p,0)/finalPts.length;
+      score=score*.55+(avg>target?.75:.25)*.45;
+    }
+  }else{
+    score=m.yes_ask ?? .5;
+  }
+
+  score=clamp(score,.01,.99);
+
+  $("prob").textContent=Math.round(score*100)+"%";
+  $("fill").style.width=(score*100)+"%";
+
+  let call="TOO CLOSE";
+  if(score>=.65) call="YES LEAN";
+  if(score>=.78) call="STRONG YES";
+  if(score<=.35) call="NO LEAN";
+  if(score<=.22) call="STRONG NO";
+
+  $("call").textContent=call;
+
+  const yesEdge=Number.isFinite(m.yes_ask)?score-m.yes_ask:null;
+  const noProb=1-score;
+  const noEdge=Number.isFinite(m.no_ask)?noProb-m.no_ask:null;
+
+  if(yesEdge!=null || noEdge!=null){
+    if((yesEdge??-99)>=(noEdge??-99)){
+      $("edge").textContent="YES "+(yesEdge>=0?"+":"")+Math.round(yesEdge*100)+"¢";
+      $("edge").className="v "+(yesEdge>0?"good":"bad");
+    }else{
+      $("edge").textContent="NO "+(noEdge>=0?"+":"")+Math.round(noEdge*100)+"¢";
+      $("edge").className="v "+(noEdge>0?"good":"bad");
+    }
+  }
 }
-function setClass(el,val){el.className="v "+(val>0?"good":val<0?"bad":"")}
-function render(){const now=Date.now(),left=closeMs?Math.max(0,Math.ceil((closeMs-now)/1000)):0;$('timer').textContent=closeMs?String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0'):'—';const stale=officialLatestT?now-officialLatestT>7000:true;const shown=officialLatest||coinbasePrice;$('spot').textContent=shown?money(shown):'—';$('targetOut').textContent=target?money(target):'—';if(shown&&target){const d=shown-target;$('distance').textContent=(d>=0?'+':'')+money(d);setClass($('distance'),d)}
- const finalStart=closeMs-60000,locked=[...secSamples].filter(([s])=>s*1000>=finalStart&&s*1000<closeMs).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);$('finalCard').className='card rows final'+(closeMs&&left<=60?' hot':'');if(closeMs&&now>=finalStart&&locked.length&&target){const sum=locked.reduce((a,b)=>a+b,0),avg=sum/locked.length,rem=Math.max(0,60-locked.length),need=rem?(target*60-sum)/rem:NaN;$('avg60').textContent=money(avg);$('locked').textContent=locked.length+' / 60';$('needed').textContent=rem?money(need):'Complete';if(rem&&officialLatest){const c=officialLatest-need;$('cushion').textContent=(c>=0?'+':'')+money(c);setClass($('cushion'),c)}}else{$('avg60').textContent='Starts at T−60';$('locked').textContent='0 / 60';$('needed').textContent='—';$('cushion').textContent='—'}
- const p15=points.filter(x=>x.t>=now-15000);if(p15.length>1){const m=officialLatest-p15[0].p;$('momentum').textContent=(m>=0?'+':'')+money(m);setClass($('momentum'),m)}else $('momentum').textContent='—';const p60=points.filter(x=>x.t>=now-60000);if(p60.length>3){let r=[];for(let i=1;i<p60.length;i++)if(p60[i].p>0&&p60[i-1].p>0)r.push(Math.log(p60[i].p/p60[i-1].p));const v=Math.sqrt(r.reduce((s,x)=>s+x*x,0)/Math.max(1,r.length))*100;$('vol').textContent=v.toFixed(3)+'%'}else $('vol').textContent='—';
- $('yesOut').textContent=cents(yesAsk);$('noOut').textContent=cents(noAsk);const prob=estimateProb(now);if(prob!=null&&!stale){const pct=prob*100;$('prob').textContent=pct.toFixed(1)+'%';$('probbar').style.width=pct+'%';const ye=Number.isFinite(yesAsk)?prob-yesAsk:null,ne=Number.isFinite(noAsk)?(1-prob)-noAsk:null;let sig='PASS',best=null;if(ye!=null&&ye>=.08&&prob>=.62){sig='YES';best=ye}if(ne!=null&&ne>=.08&&(1-prob)>=.62&&(best==null||ne>best)){sig='NO';best=ne}$('signal').textContent=sig==='PASS'?'PASS / LOW EDGE':sig+' SIGNAL';$('signal').className='sig '+(sig==='YES'?'good':sig==='NO'?'bad':'warn');$('edge').textContent=best!=null?(best>=0?'+':'')+(best*100).toFixed(1)+'¢':'—';$('edge').className=best!=null?'v '+(best>=.08?'good':'warn'):'v'}else{$('prob').textContent='—';$('signal').textContent=stale&&apiOK?'DATA STALE':'WAITING FOR DATA';$('signal').className='sig warn';$('edge').textContent='—'}
- $('conn').className='pill '+(apiOK&&!stale?'live':'');$('conn').innerHTML='<span class="dot"></span>'+(apiOK?(stale?'Stale':'Live'):'Connecting');if(apiOK){$('feedLabel').textContent=(officialLatest?'Kalshi live-data via your Cloudflare Worker':'Kalshi market live • waiting for index samples')+(stale?' • STALE':'')}else $('feedLabel').textContent=coinbasePrice?'⚠ API unavailable • Coinbase INDICATIVE only':'Connecting to BTC15 API…'}
-async function poll(){if(fetching||Date.now()<nextPoll)return;fetching=true;try{const r=await fetch(API+'?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);const j=await r.json();if(!j.ok)throw new Error(j.error||'API error');apiOK=true;market=j.market||market;target=Number(market?.target)||target;closeMs=Date.parse(market?.close_time)||closeMs;yesAsk=Number(market?.yes_ask);noAsk=Number(market?.no_ask);if(!Number.isFinite(yesAsk))yesAsk=null;if(!Number.isFinite(noAsk))noAsk=null;mergePoints(j.live?.points||[]);if(j.live?.latest)mergePoints([j.live.latest]);$('marketLine').textContent=`${market?.ticker||'KXBTC15M'} • closes ${market?.close_time?new Date(market.close_time).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}):'—'} • target ${money(target)}`;nextPoll=Date.now()+2500}catch(e){apiOK=false;nextPoll=Date.now()+5000;$('marketLine').textContent='API retrying: '+String(e.message||e)}finally{fetching=false;render()}}
-function connectCoinbase(){const ws=new WebSocket('wss://advanced-trade-ws.coinbase.com');ws.onopen=()=>ws.send(JSON.stringify({type:'subscribe',product_ids:['BTC-USD'],channel:'ticker'}));ws.onmessage=e=>{try{const d=JSON.parse(e.data);for(const ev of (d.events||[]))for(const t of (ev.tickers||[])){const p=Number(t.price);if(p)coinbasePrice=p}}catch{}};ws.onclose=()=>setTimeout(connectCoinbase,2000);ws.onerror=()=>ws.close()}
-setInterval(()=>{render();poll()},250);poll();connectCoinbase();if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').then(r=>r.update()).catch(()=>{});
-</script></body></html>
+
+function updateTimer(){
+  if(!data?.market?.close_time)return;
+  const close=Date.parse(data.market.close_time);
+  const sec=Math.max(0,Math.ceil((close-Date.now())/1000));
+  const mm=Math.floor(sec/60);
+  const ss=String(sec%60).padStart(2,"0");
+  $("timer").textContent=mm+":"+ss;
+
+  if(sec<=60) $("timer").className="big warn";
+  else $("timer").className="big";
+
+  calc();
+}
+
+async function load(){
+  try{
+    const r=await fetch(API+"?t="+Date.now(),{cache:"no-store"});
+    if(!r.ok) throw new Error("API "+r.status);
+
+    data=await r.json();
+    if(!data.ok) throw new Error(data.error||"API error");
+
+    $("connection").textContent="Live";
+    $("dot").style.background="var(--green)";
+
+    const m=data.market;
+    $("market").textContent=m.title||"BTC 15-minute market";
+    $("ticker").textContent=m.ticker||"";
+    $("closeTime").textContent=
+      m.close_time ? new Date(m.close_time).toLocaleTimeString([],{
+        hour:"numeric",minute:"2-digit",second:"2-digit"
+      }) : "—";
+
+    if(data.live?.latest?.t){
+      $("priceTime").textContent=
+        "Updated "+new Date(data.live.latest.t).toLocaleTimeString();
+    }
+
+    calc();
+  }catch(e){
+    $("connection").textContent="Retrying";
+    $("dot").style.background="var(--red)";
+    $("market").textContent="Connection error: "+e.message;
+  }
+}
+
+load();
+setInterval(load,3000);
+setInterval(updateTimer,250);
+</script>
+</body>
+</html>

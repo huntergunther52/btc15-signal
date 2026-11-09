@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "status": "scheduled",
+  "window": {
+    "start": "2026-11-09T17:34:00Z",
+    "end": "2026-11-16T17:34:00Z",
+    "reportAt": "2026-11-16T18:19:52Z"
+  },
+  "pilot": {
+    "Gold": {"closed": 6, "wins": 2, "net": -3.2472, "max_drawdown": 3.409, "unresolved_exit": 0},
+    "WTI oil": {"closed": 8, "wins": 3, "net": -5.1806, "max_drawdown": 5.7693, "unresolved_exit": 1},
+    "Silver": {"closed": 6, "wins": 3, "net": -2.2777, "max_drawdown": 2.5092, "unresolved_exit": 0},
+    "GBP/USD": {"closed": 4, "wins": 3, "net": -2.1275, "max_drawdown": 3.2705, "unresolved_exit": 0},
+    "EUR/USD": {"closed": 5, "wins": 2, "net": -0.0824, "max_drawdown": 2.7454, "unresolved_exit": 0}
+  },
+  "results": null
+}
